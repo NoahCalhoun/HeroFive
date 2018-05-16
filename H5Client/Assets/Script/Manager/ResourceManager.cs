@@ -9,17 +9,16 @@ public class ResourceManager
 
     private Dictionary<string, Texture2D> mTextureDic = new Dictionary<string, Texture2D>();
 
-    public Texture2D LoadImage()
+    public Texture2D LoadImage(string _keyStr, string _whereStr)
     {
-        var keyStr = "Test";
-        if (mTextureDic.ContainsKey(keyStr))
-            return mTextureDic[keyStr];
+        if (mTextureDic.ContainsKey(_keyStr))
+            return mTextureDic[_keyStr];
 
-        var texture = Resources.Load("Texture/TestImage", typeof(Texture2D)) as Texture2D;
+        var texture = Resources.Load(_whereStr, typeof(Texture2D)) as Texture2D;
         if (texture == null)
             return null;
 
-        mTextureDic.Add(keyStr, texture);
+        mTextureDic.Add(_keyStr, texture);
         return texture;
     }
 }

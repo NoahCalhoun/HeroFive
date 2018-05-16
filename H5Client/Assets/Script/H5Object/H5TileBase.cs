@@ -9,7 +9,7 @@ public enum TILE_TYPE
 }
 public class H5TileBase : H5ObjectBase
 {
-
+    public TILE_TYPE m_TileType;
     public virtual void InitObject()
     {
         var loadMaterial = Resources.Load("Material/Tile") as Material;

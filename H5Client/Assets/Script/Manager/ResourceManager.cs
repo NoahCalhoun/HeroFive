@@ -18,7 +18,9 @@ public class ResourceManager
         if (texture == null)
             return null;
 
+        Resources.UnloadAsset(texture);
         mTextureDic.Add(_keyStr, texture);
         return texture;
+        
     }
 }

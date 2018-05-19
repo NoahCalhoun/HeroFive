@@ -18,9 +18,9 @@ public class WorldManager : MonoBehaviour
     {
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
-        SpawnTestObject(-2, -2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
-        SpawnTestObject(2, 2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
-        SpawnTestObject(0, 0, "Prefab/Tile", OBJECT_TYPE.OBJECT_TILE);
+       // SpawnObjectOnCell(-2, -2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
+        SpawnObjectOnCell(2, 2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
+        //SpawnTestObject(0, 0, "Prefab/Tile", OBJECT_TYPE.OBJECT_TILE);
     }
 
     // Update is called once per frame
@@ -60,4 +60,34 @@ public class WorldManager : MonoBehaviour
         return h5Test;
     }
 
+    public H5ObjectBase SpawnObjectOnCell(int _iRow, int _iColumn, string _sObjWhere, OBJECT_TYPE _eObjtype)
+    {
+        var testObjectPrefab = Resources.Load(_sObjWhere) as GameObject;
+        var testObject = GameObject.Instantiate(testObjectPrefab);
+
+        if (testObject == null)
+            return null;
+
+        H5ObjectBase h5Test = null;
+
+        switch (_eObjtype)
+        {
+            case OBJECT_TYPE.OBJECT_TEST:
+                h5Test = testObject.AddComponent<H5TestObject>();
+                break;
+
+            case OBJECT_TYPE.OBJECT_TILE:
+                h5Test = testObject.AddComponent<H5TileBase>();
+                break;
+        }
+
+        if (h5Test == null)
+            return null;
+
+        h5Test.TM.SetParent(WorldRoot);
+        h5Test.InitObject();
+        h5Test.PlaceOnCell(_iRow, _iColumn);
+
+        return h5Test;
+    }
 }

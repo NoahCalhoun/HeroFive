@@ -26,7 +26,7 @@ public class WorldManager : MonoBehaviour
 
         for (int i = 0; i < 100; ++i)
         {
-            SpawnTile((byte)(i / 10), (byte)(i % 10), TILE_TYPE.TILE_TYPE_NORMAL);
+            SpawnTile((byte)(i / 10), (byte)(i % 10), i > 73 ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL);
         }
 
         FocusCameraOnTile(5, 5);

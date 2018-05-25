@@ -35,7 +35,7 @@ public class WorldManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        OnMouseClickEvent();
     }
 
     public H5ObjectBase SpawnTestObject(float x, float z, string objwhere, OBJECT_TYPE objtype)
@@ -100,10 +100,11 @@ public class WorldManager : MonoBehaviour
             lookAt = new Vector3(H5TileBase.TileSize * x, 0, H5TileBase.TileSize * y);
         }
 
-        var camPos = lookAt + new Vector3(CameraFloorDist * 0.7072f, CameraSkyDist, CameraFloorDist * 0.7072f);
-        var lookDir = (lookAt - camPos).normalized;
+        var lookVec = new Vector3(CameraFloorDist * 0.7072f, CameraSkyDist, CameraFloorDist * 0.7072f) * -1f;
+        var lookDir = lookVec.normalized;
         var rightDir = Vector3.Cross(lookDir, Vector3.up).normalized;
         var upDir = Vector3.Cross(rightDir, lookDir).normalized;
+        var camPos = lookAt - lookVec;
 
         Matrix4x4 camWorld = new Matrix4x4(
             new Vector4(rightDir.x, rightDir.y, rightDir.z, 0),
@@ -113,5 +114,29 @@ public class WorldManager : MonoBehaviour
 
         Camera.main.transform.position = camPos;
         Camera.main.transform.localRotation = camWorld.rotation;
+    }
+
+    void OnMouseClickEvent()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, float.PositiveInfinity, -1);
+            if (hit.collider != null)
+            {
+                var e = TileDic.GetEnumerator();
+                while(e.MoveNext())
+                {
+                    if (e.Current.Value.GO == hit.collider.gameObject)
+                    {
+                        byte bx = LogicHelper.GetXFromCoordinate(e.Current.Key);
+                        byte by = LogicHelper.GetYFromCoordinate(e.Current.Key);
+                        FocusCameraOnTile(bx, by);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

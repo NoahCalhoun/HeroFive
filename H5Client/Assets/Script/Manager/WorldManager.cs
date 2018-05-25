@@ -12,15 +12,24 @@ public enum OBJECT_TYPE
 public class WorldManager : MonoBehaviour
 {
     private Transform WorldRoot;
+    public Transform TileRoot;
+
+    private Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
+
+    private float CameraFloorDist = 10f;
+    private float CameraSkyDist = 8f;
 
     // Use this for initialization
     void Start()
     {
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
-        SpawnTestObject(-2, -2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
-        SpawnTestObject(2, 2, "Prefab/TestObject", OBJECT_TYPE.OBJECT_TEST);
-        SpawnTestObject(0, 0, "Prefab/Tile", OBJECT_TYPE.OBJECT_TILE);
+        for (int i = 0; i < 100; ++i)
+        {
+            SpawnTile((byte)(i / 10), (byte)(i % 10), TILE_TYPE.TILE_TYPE_NORMAL);
+        }
+
+        FocusCameraOnTile(5, 5);
     }
 
     // Update is called once per frame
@@ -60,4 +69,49 @@ public class WorldManager : MonoBehaviour
         return h5Test;
     }
 
+    public H5TileBase SpawnTile(byte x, byte y, TILE_TYPE type)
+    {
+        var tileObjPrefab = Resources.Load("Prefab/Tile") as GameObject;
+        var tileObj = GameObject.Instantiate(tileObjPrefab);
+
+        if (tileObj == null)
+            return null;
+
+        var h5Tile = tileObj.AddComponent<H5TileBase>();
+        h5Tile.TM.SetParent(TileRoot);
+        h5Tile.InitTile(type);
+        h5Tile.PlaceOnWorld(H5TileBase.TileSize * x, H5TileBase.TileSize * y);
+
+        TileDic.Add(LogicHelper.GetCoordinateFromXY(x, y), h5Tile);
+
+        return h5Tile;
+    }
+
+    public void FocusCameraOnTile(byte x, byte y)
+    {
+        var coordinate = LogicHelper.GetCoordinateFromXY(x, y);
+        Vector3 lookAt;
+        if (TileDic.ContainsKey(coordinate))
+        {
+            lookAt = TileDic[coordinate].TM.position;
+        }
+        else
+        {
+            lookAt = new Vector3(H5TileBase.TileSize * x, 0, H5TileBase.TileSize * y);
+        }
+
+        var camPos = lookAt + new Vector3(CameraFloorDist * 0.7072f, CameraSkyDist, CameraFloorDist * 0.7072f);
+        var lookDir = (lookAt - camPos).normalized;
+        var rightDir = Vector3.Cross(lookDir, Vector3.up).normalized;
+        var upDir = Vector3.Cross(rightDir, lookDir).normalized;
+
+        Matrix4x4 camWorld = new Matrix4x4(
+            new Vector4(rightDir.x, rightDir.y, rightDir.z, 0),
+            new Vector4(upDir.x, upDir.y, upDir.z, 0),
+            new Vector4(lookDir.x, lookDir.y, lookDir.z, 0),
+            new Vector4(0, 0, 0, 1));
+
+        Camera.main.transform.position = camPos;
+        Camera.main.transform.localRotation = camWorld.rotation;
+    }
 }

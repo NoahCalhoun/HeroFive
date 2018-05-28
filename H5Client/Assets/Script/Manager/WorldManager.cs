@@ -79,7 +79,7 @@ public class WorldManager : MonoBehaviour
 
         var h5Tile = tileObj.AddComponent<H5TileBase>();
         h5Tile.TM.SetParent(TileRoot);
-        h5Tile.InitTile(type);
+        h5Tile.InitTile(type, x, y);
         h5Tile.PlaceOnWorld(H5TileBase.TileSize * x, H5TileBase.TileSize * y);
 
         TileDic.Add(LogicHelper.GetCoordinateFromXY(x, y), h5Tile);

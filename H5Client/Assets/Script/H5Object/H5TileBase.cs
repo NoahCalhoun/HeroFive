@@ -9,11 +9,25 @@ public enum TILE_TYPE
     TILE_TYPE_WATER,
 }
 
+public enum TILE_DIRECTION
+{
+    NONE = -1,
+
+    TOP,
+    RIGHT,
+    BOTTOM,
+    LEFT,
+
+    MAX,
+}
+
 public class H5TileBase : H5ObjectBase
 {
     public static readonly float TileSize = 1f;
 
     public TILE_TYPE m_TileType;
+    public readonly H5TileBase[] m_NeighborTile = new H5TileBase[(int)TILE_DIRECTION.MAX];
+
     public override void InitObject()
     {
         Vector4 m_TileUV = new Vector4(0, 0, 0, 0);

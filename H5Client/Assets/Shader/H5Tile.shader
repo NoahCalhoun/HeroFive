@@ -5,6 +5,7 @@
 		_MainTex("Texture", 2D) = "" {}
 		_Cutoff("Alpha cutoff", Range(0,1)) = 0.9
 		_UVPos("UV Value", VECTOR) = (0, 0, 0, 0)
+		_Neighbor("Neighbor", Int) = 0
 	}
 
 		SubShader
@@ -42,6 +43,7 @@
 	sampler2D _MainTex;
 	float4 _MainTex_ST;
 	float _Cutoff;
+	int _Neighbor;
 
 	v2f vert(appdata v)
 	{
@@ -55,8 +57,23 @@
 	fixed4 frag(v2f i) : SV_Target
 	{
 		fixed4 col = tex2D(_MainTex, i.uv) * i.color; // 수정필요
+
 		if (col.a < _Cutoff)
 			discard;
+
+		if (_Neighbor & 32)
+		{
+			float alphaValue = 0.2;
+
+			if (_Neighbor & 2 && i.uv.y >= 0.9
+				|| _Neighbor & 4 && i.uv.y <= 0.1
+				|| _Neighbor & 8 && i.uv.x <= 0.1
+				|| _Neighbor & 16 && i.uv.x >= 0.9)
+				alphaValue = 0.5;
+
+			col = col * (1 - alphaValue) + fixed4(0, 0, 1, 1) * alphaValue;
+		}
+
 		return col;
 	}
 

@@ -31,4 +31,53 @@ public static class LogicHelper
     {
         return (byte)(coordinate & byte.MaxValue);
     }
+
+    public static ushort GetNeighborCoordinate(this ushort host, TILE_NEIGHBOR type)
+    {
+        switch(type)
+        {
+            case TILE_NEIGHBOR.Up:
+                return host.GetUpCoordinate();
+            case TILE_NEIGHBOR.Down:
+                return host.GetDownCoordinate();
+            case TILE_NEIGHBOR.Left:
+                return host.GetLeftCoordinate();
+            case TILE_NEIGHBOR.Right:
+                return host.GetRightCoordinate();
+            default:
+                return ushort.MaxValue;
+        }
+    }
+
+    public static ushort GetUpCoordinate(this ushort host)
+    {
+        var hostX = GetXFromCoordinate(host);
+        var hostY = GetYFromCoordinate(host);
+        hostY += 1;
+        return GetCoordinateFromXY(hostX, hostY);
+    }
+
+    public static ushort GetDownCoordinate(this ushort host)
+    {
+        var hostX = GetXFromCoordinate(host);
+        var hostY = GetYFromCoordinate(host);
+        hostY -= 1;
+        return GetCoordinateFromXY(hostX, hostY);
+    }
+
+    public static ushort GetLeftCoordinate(this ushort host)
+    {
+        var hostX = GetXFromCoordinate(host);
+        var hostY = GetYFromCoordinate(host);
+        hostX -= 1;
+        return GetCoordinateFromXY(hostX, hostY);
+    }
+
+    public static ushort GetRightCoordinate(this ushort host)
+    {
+        var hostX = GetXFromCoordinate(host);
+        var hostY = GetYFromCoordinate(host);
+        hostX += 1;
+        return GetCoordinateFromXY(hostX, hostY);
+    }
 }

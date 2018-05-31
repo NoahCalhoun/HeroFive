@@ -13,6 +13,7 @@ public class WorldManager : MonoBehaviour
 {
     private Transform WorldRoot;
     public Transform TileRoot;
+    public Transform CharacterRoot;
 
     private Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
 
@@ -32,6 +33,13 @@ public class WorldManager : MonoBehaviour
         SetTilesNeighbor();
 
         FocusCameraOnTile(5, 5);
+
+        SpawnCharacter(1, 1, CharacterType.Monarch);
+        SpawnCharacter(0, 3, CharacterType.Tanker);
+        SpawnCharacter(3, 0, CharacterType.Dealer);
+        SpawnCharacter(3, 2, CharacterType.Positioner);
+        SpawnCharacter(2, 3, CharacterType.Supporter);
+        SpawnCharacter(6, 7, CharacterType.Monster);
     }
 
     // Update is called once per frame
@@ -90,6 +98,32 @@ public class WorldManager : MonoBehaviour
         return h5Tile;
     }
 
+    public H5CharacterBase SpawnCharacter(byte x, byte y, CharacterType type)
+    {
+        var characterObjPrefab = Resources.Load("Prefab/Character") as GameObject;
+        var characterObj = GameObject.Instantiate(characterObjPrefab);
+
+        if (characterObj == null)
+            return null;
+
+        var coord = LogicHelper.GetCoordinateFromXY(x, y);
+        var h5Character = characterObj.AddComponent<H5CharacterBase>();
+        h5Character.TM.SetParent(CharacterRoot);
+        h5Character.InitCharacter(type);
+
+        var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
+        if (spawnTile != null)
+        {
+            h5Character.TM.position = spawnTile.TM.position;
+        }
+        else
+        {
+            h5Character.TM.position = new Vector3(0, 0, 0);
+        }
+
+        return h5Character;
+    }
+
     public void FocusCameraOnTile(byte x, byte y)
     {
         var coordinate = LogicHelper.GetCoordinateFromXY(x, y);
@@ -131,7 +165,7 @@ public class WorldManager : MonoBehaviour
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            Physics.Raycast(ray, out hit, float.PositiveInfinity, -1);
+            Physics.Raycast(ray, out hit, float.PositiveInfinity, 1 << 10);
             if (hit.collider != null)
             {
                 var e = TileDic.GetEnumerator();

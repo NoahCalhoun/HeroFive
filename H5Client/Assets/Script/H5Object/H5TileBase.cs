@@ -141,11 +141,11 @@ public class H5TileBase : H5ObjectBase
         if (tiles == null)
             tiles = new HashSet<ushort>();
 
+        if (bound < 0)
+            return tiles;
+
         if (tiles.Contains(Coordinate) == false)
             tiles.Add(Coordinate);
-
-        if (bound <= 0)
-            return tiles;
 
         for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
         {

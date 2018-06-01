@@ -29,7 +29,10 @@ public class WorldManager : MonoBehaviour
 
         for (int i = 0; i < 100; ++i)
         {
-            SpawnTile((byte)(i / 10), (byte)(i % 10), i > 73 ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL);
+            byte x = (byte)(i / 10);
+            byte y = (byte)(i % 10);
+            var type = (x >= 4 && x <= 6 && y >= 4 && y <= 6) ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL;
+            SpawnTile(x, y, type);
         }
 
         SetTilesNeighbor();

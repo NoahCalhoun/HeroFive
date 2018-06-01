@@ -30,38 +30,42 @@ public class MoveManager
     private static MoveManager mInstance;
     public static MoveManager Instance { get { if (mInstance == null) mInstance = new MoveManager(); return mInstance; } }
 
+    List<H5TileBase> PathList = new List<H5TileBase>();
+    Dictionary<long, AStarNode> OpenDic = new Dictionary<long, AStarNode>();
+    HashSet<ushort> CloseSet = new HashSet<ushort>();
+    SortedDictionary<long, List<AStarNode>> SortedDic = new SortedDictionary<long, List<AStarNode>>();
+
     public List<H5TileBase> FindPath(H5TileBase _start, H5TileBase _target)
     {
-        List<H5TileBase> pathList = new List<H5TileBase>();
-        
-        Dictionary<long, AStarNode> openDic = new Dictionary<long, AStarNode>();
-        HashSet<ushort> closeSet = new HashSet<ushort>();
+        PathList.Clear();
+        OpenDic.Clear();
+        CloseSet.Clear();
+        SortedDic.Clear();
 
         AStarNode CurNode = new AStarNode(_start, null, 0, _target);
-        AStarNode NextNode = null;
 
         while(true)
         {
-            closeSet.Add(CurNode.This.m_Coordinate.xy);
+            CloseSet.Add(CurNode.This.m_Coordinate.xy);
 
             foreach (TILE_NEIGHBOR direction in System.Enum.GetValues(typeof(TILE_NEIGHBOR)))
             {
                 if (direction == TILE_NEIGHBOR.Max) break;
-                AddOpenDic(CurNode, direction, _target, openDic, closeSet, ref NextNode);
+                AddOpenDic(CurNode, direction, _target);
             }
 
-            if (openDic.Count == 0) break;
-
-            CurNode = NextNode;
-            NextNode = null;
-
-            openDic.Remove(CurNode.This.m_Coordinate.xy);
+            if (OpenDic.Count <= 0 || SortedDic.Count <= 0) break;
+            
+            var e = SortedDic.GetEnumerator(); e.MoveNext();
+            CurNode = e.Current.Value[0];
+            OpenDic.Remove(CurNode.This.m_Coordinate.xy);
+            SortedDic[CurNode.F].RemoveAt(0);
 
             if (CurNode.GetCoordinate() == _target.m_Coordinate.xy)
             {
                 while (true)
                 {
-                    pathList.Insert(0, CurNode.This);
+                    PathList.Insert(0, CurNode.This);
                     CurNode = CurNode.Parent;
 
                     if (CurNode.GetCoordinate() == _start.m_Coordinate.xy)
@@ -71,21 +75,21 @@ public class MoveManager
             }
         }
         
-        return pathList;
+        return new List<H5TileBase>(PathList);
     }
     
-    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, ref AStarNode _NextNode)
+    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _target)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
         if (NeighborTile == null || !NeighborTile.IsWalkable) return;
 
         ushort Coordinate = NeighborTile.m_Coordinate.xy;
-        if (_closeSet.Contains(Coordinate)) return;
+        if (CloseSet.Contains(Coordinate)) return;
 
         long NeighborG = _node.G + 1;
 
         AStarNode inOpen;
-        if (_openDic.TryGetValue(Coordinate, out inOpen))
+        if (OpenDic.TryGetValue(Coordinate, out inOpen))
         {
             if (inOpen.G < NeighborG)
             {
@@ -93,18 +97,23 @@ public class MoveManager
             }
             else
             {
+                long f = inOpen.F;
                 inOpen.G = NeighborG;
                 inOpen.F = inOpen.G + inOpen.H;
                 inOpen.Parent = _node;
-                if (_NextNode == null || _NextNode.F > inOpen.F) _NextNode = inOpen;
+                SortedDic[f].Remove(inOpen);
+                if (SortedDic.ContainsKey(inOpen.F) == false)
+                    SortedDic.Add(inOpen.F, new List<AStarNode>());
+                SortedDic[inOpen.F].Add(inOpen);
                 return;
             }
         }
 
         AStarNode NeighborNode = new AStarNode(NeighborTile, _node, NeighborG, _target);
-        _openDic.Add(Coordinate, NeighborNode);
-
-        if (_NextNode == null || _NextNode.F > NeighborNode.F) _NextNode = NeighborNode;
+        OpenDic.Add(Coordinate, NeighborNode);
+        if (SortedDic.ContainsKey(NeighborNode.F) == false)
+            SortedDic.Add(NeighborNode.F, new List<AStarNode>());
+        SortedDic[NeighborNode.F].Add(NeighborNode);
     }
 
     public static long GetDistance(H5TileBase tile1, H5TileBase tile2)

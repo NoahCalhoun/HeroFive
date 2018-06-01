@@ -9,8 +9,7 @@ class AStarNode
     public long F; // 총 비용 F = G + H
     public long H; // 목적지와의 거리
     public long G; // 시작점과의 거리
-
-    public AStarNode(H5TileBase _This, AStarNode _Parent, H5TileBase _Start, H5TileBase _Target)
+    
     public AStarNode(H5TileBase _This, AStarNode _Parent, long _G, H5TileBase _Target)
     {
         This = _This;

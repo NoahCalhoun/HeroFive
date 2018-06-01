@@ -23,10 +23,10 @@ public enum TILE_NEIGHBOR
 public struct Coordinate
 {
     [FieldOffset(0)]
-    public byte y;
+    public byte x;
 
     [FieldOffset(1)]
-    public byte x;
+    public byte y;
 
     [FieldOffset(0)]
     public ushort xy;
@@ -91,7 +91,6 @@ public class H5TileBase : H5ObjectBase
     {
         m_TileType = type;
         Coordinate = coord;
-        m_Coordinate = new Coordinate(Coordinate);
 
         Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
 

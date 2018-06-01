@@ -10,12 +10,12 @@ public class AStarNode
     public long H; // 목적지와의 거리
     public long G; // 시작점과의 거리
 
-    public AStarNode(H5TileBase _This, AStarNode _Parent, H5TileBase _Start, H5TileBase _Target)
+    public AStarNode(H5TileBase _This, AStarNode _Parent, long _G, H5TileBase _Target)
     {
         This = _This;
         Parent = _Parent;
         H = MoveManager.GetDistance(_This, _Target);
-        G = MoveManager.GetDistance(_This, _Start);
+        G = _G;
         F = H + G;
     }
      
@@ -34,7 +34,7 @@ public class MoveManager
         Dictionary<long, AStarNode> openDic = new Dictionary<long, AStarNode>();
         HashSet<ushort> closeSet = new HashSet<ushort>();
 
-        AStarNode CurNode = new AStarNode(_start, null, _start, _target);
+        AStarNode CurNode = new AStarNode(_start, null, 0, _target);
         AStarNode NextNode = null;
 
         while(true)
@@ -44,7 +44,7 @@ public class MoveManager
             foreach (TILE_NEIGHBOR direction in System.Enum.GetValues(typeof(TILE_NEIGHBOR)))
             {
                 if (direction == TILE_NEIGHBOR.Max) break;
-                AddOpenDic(CurNode, direction, _start, _target, openDic, closeSet, NextNode);
+                AddOpenDic(CurNode, direction, _target, openDic, closeSet, NextNode);
             }
 
             if (openDic.Count == 0) break;
@@ -70,7 +70,7 @@ public class MoveManager
         return pathList;
     }
 
-    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _start, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, AStarNode _NextNode)
+    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, AStarNode _NextNode)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
         if (NeighborTile == null || !NeighborTile.IsWalkable) return;
@@ -78,7 +78,7 @@ public class MoveManager
         ushort Coordinate = NeighborTile.m_Coordinate.xy;
         if (_closeSet.Contains(Coordinate)) return;
 
-        long NeighborG = GetDistance(NeighborTile, _start);
+        long NeighborG = _node.G + 1;
 
         AStarNode inOpen;
         if (_openDic.TryGetValue(Coordinate, out inOpen))
@@ -97,7 +97,7 @@ public class MoveManager
             }
         }
 
-        AStarNode NeighborNode = new AStarNode(NeighborTile, _node, _start, _target);
+        AStarNode NeighborNode = new AStarNode(NeighborTile, _node, NeighborG, _target);
         _openDic.Add(Coordinate, NeighborNode);
 
         if (_NextNode == null || _NextNode.F > NeighborNode.F) _NextNode = NeighborNode;

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public enum TILE_TYPE
@@ -18,6 +19,19 @@ public enum TILE_NEIGHBOR
     Max
 }
 
+[StructLayout(LayoutKind.Explicit)]
+struct Coordinate
+{
+    [FieldOffset(0)]
+    public byte x;
+
+    [FieldOffset(1)]
+    public byte y;
+
+    [FieldOffset(0)]
+    public ushort xy;
+}
+
 public class H5TileBase : H5ObjectBase
 {
     public static readonly float TileSize = 1f;
@@ -28,6 +42,8 @@ public class H5TileBase : H5ObjectBase
     private ushort Coordinate;
     private int NeighborFlag;
     private int SettingFlag;
+
+    private Coordinate m_Coordinate;
 
     public bool IsWalkable { get { return m_TileType == TILE_TYPE.TILE_TYPE_NORMAL; } }
 

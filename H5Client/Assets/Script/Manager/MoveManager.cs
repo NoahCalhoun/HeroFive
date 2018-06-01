@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AStarNode
+class AStarNode
 {
     public H5TileBase This;
     public AStarNode Parent;
@@ -27,7 +27,10 @@ public class AStarNode
 
 public class MoveManager
 {
-    List<H5TileBase> FindPath(H5TileBase _start, H5TileBase _target)
+    private static MoveManager mInstance;
+    public static MoveManager Instance { get { if (mInstance == null) mInstance = new MoveManager(); return mInstance; } }
+
+    public List<H5TileBase> FindPath(H5TileBase _start, H5TileBase _target)
     {
         List<H5TileBase> pathList = new List<H5TileBase>();
         
@@ -44,12 +47,13 @@ public class MoveManager
             foreach (TILE_NEIGHBOR direction in System.Enum.GetValues(typeof(TILE_NEIGHBOR)))
             {
                 if (direction == TILE_NEIGHBOR.Max) break;
-                AddOpenDic(CurNode, direction, _start, _target, openDic, closeSet, NextNode);
+                AddOpenDic(CurNode, direction, _start, _target, openDic, closeSet, ref NextNode);
             }
 
             if (openDic.Count == 0) break;
 
             CurNode = NextNode;
+            NextNode = null;
 
             openDic.Remove(CurNode.This.m_Coordinate.xy);
 
@@ -70,7 +74,7 @@ public class MoveManager
         return pathList;
     }
 
-    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _start, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, AStarNode _NextNode)
+    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _start, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, ref AStarNode _NextNode)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
         if (NeighborTile == null || !NeighborTile.IsWalkable) return;
@@ -108,8 +112,8 @@ public class MoveManager
         if (tile1 == null || tile2 == null)
             return -1;
 
-        long DistX = System.Math.Abs(tile1.m_Coordinate.x - tile2.m_Coordinate.x);
-        long DistY = System.Math.Abs(tile1.m_Coordinate.y - tile2.m_Coordinate.y);
+        long DistX = tile1.m_Coordinate.x > tile2.m_Coordinate.x ? tile1.m_Coordinate.x - tile2.m_Coordinate.x : tile2.m_Coordinate.x - tile1.m_Coordinate.x;
+        long DistY = tile1.m_Coordinate.y > tile2.m_Coordinate.y ? tile1.m_Coordinate.y - tile2.m_Coordinate.y : tile2.m_Coordinate.y - tile1.m_Coordinate.y;
         return DistX + DistY;
     }
 }

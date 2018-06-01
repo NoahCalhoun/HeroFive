@@ -20,8 +20,6 @@ public class WorldManager : MonoBehaviour
     private float CameraFloorDist = 10f;
     private float CameraSkyDist = 8f;
 
-    private List<H5TileBase> Path;
-
     // Use this for initialization
     void Start()
     {
@@ -182,7 +180,7 @@ public class WorldManager : MonoBehaviour
                         if (e.Current.Value.IsWalkable == false)
                             return;
 
-                        var bound = e.Current.Value.GetBound(0);
+                        var bound = e.Current.Value.GetBound(2);
                         if (bound != null && bound.Count > 0)
                         {
                             var eb = bound.GetEnumerator();
@@ -193,10 +191,7 @@ public class WorldManager : MonoBehaviour
                             }
                             SetBoundEdge(bound);
                         }
-
-                        Path = MoveManager.Instance.FindPath(TileDic[(1 << 8) | 1], e.Current.Value);
-
-                        break;
+                        return;
                     }
                 }
             }
@@ -256,19 +251,6 @@ public class WorldManager : MonoBehaviour
                 var checkCoord = e.Current.GetNeighborCoordinate(i);
                 if (bound.Contains(checkCoord) == false)
                     TileDic[e.Current].SetFlag(i);
-            }
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        if (Path != null && Path.Count > 0)
-        {
-            Gizmos.DrawLine(TileDic[(1 << 8) | 1].TM.position, Path[0].TM.position);
-            for (int i = 0; i < Path.Count - 1; ++i)
-            {
-                Gizmos.DrawLine(Path[i].TM.position, Path[i + 1].TM.position);
             }
         }
     }

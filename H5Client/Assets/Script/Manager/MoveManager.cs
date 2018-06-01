@@ -73,7 +73,7 @@ public class MoveManager
     void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _start, H5TileBase _target, Dictionary<long, AStarNode> _openDic, HashSet<ushort> _closeSet, AStarNode _NextNode)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
-        if (NeighborTile == null) return;
+        if (NeighborTile == null || !NeighborTile.IsWalkable) return;
 
         ushort Coordinate = NeighborTile.m_Coordinate.xy;
         if (_closeSet.Contains(Coordinate)) return;

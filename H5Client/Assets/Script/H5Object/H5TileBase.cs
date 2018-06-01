@@ -20,7 +20,7 @@ public enum TILE_NEIGHBOR
 }
 
 [StructLayout(LayoutKind.Explicit)]
-struct Coordinate
+public struct Coordinate
 {
     [FieldOffset(0)]
     public byte x;
@@ -30,20 +30,35 @@ struct Coordinate
 
     [FieldOffset(0)]
     public ushort xy;
+
+    public Coordinate(ushort _xy)
+    {
+        x = 0;
+        y = 0;
+        this.xy = _xy;
+    }
+
+    public Coordinate(byte _x, byte _y)
+    {
+        this.xy = 0;
+        this.x = _x;
+        this.y = _y;
+    }
 }
 
 public class H5TileBase : H5ObjectBase
 {
     public static readonly float TileSize = 1f;
 
-    private H5TileBase[] mNeighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
+    private H5TileBase[] m_Neighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
+    public H5TileBase GetNeighbor(TILE_NEIGHBOR _direction) { return m_Neighbors[(int)_direction]; }
     private Material Material;
 
     private ushort Coordinate;
     private int NeighborFlag;
     private int SettingFlag;
 
-    private Coordinate m_Coordinate;
+    public Coordinate m_Coordinate { get; private set; }
 
     public bool IsWalkable { get { return m_TileType == TILE_TYPE.TILE_TYPE_NORMAL; } }
 
@@ -111,7 +126,7 @@ public class H5TileBase : H5ObjectBase
         if (typeInt < 0 || typeInt >= (int)TILE_NEIGHBOR.Max)
             return;
 
-        mNeighbors[typeInt] = (tile != null && tile.IsWalkable) ? tile : null;
+        m_Neighbors[typeInt] = (tile != null && tile.IsWalkable) ? tile : null;
     }
 
     public void SetPicked(bool picked)
@@ -165,7 +180,7 @@ public class H5TileBase : H5ObjectBase
 
         for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
         {
-            var neighbor = mNeighbors[(int)i];
+            var neighbor = m_Neighbors[(int)i];
             if (neighbor != null)
             {
                 neighbor.BoundCheckRecursive(bound - 1, tiles);

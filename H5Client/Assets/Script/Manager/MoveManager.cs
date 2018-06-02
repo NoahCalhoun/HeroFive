@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 class AStarNode
 {
@@ -56,7 +54,12 @@ public class MoveManager
 
             if (OpenDic.Count <= 0 || SortedDic.Count <= 0) break;
             
-            var e = SortedDic.GetEnumerator(); e.MoveNext();
+            var e = SortedDic.GetEnumerator();
+            while (e.MoveNext())
+            {
+                if (e.Current.Value.Count > 0)
+                    break;
+            }
             CurNode = e.Current.Value[0];
             OpenDic.Remove(CurNode.This.m_Coordinate.xy);
             SortedDic[CurNode.F].RemoveAt(0);

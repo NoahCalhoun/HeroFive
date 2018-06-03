@@ -21,6 +21,8 @@ public class WorldManager : MonoBehaviour
     private float CameraSkyDist = 8f;
 
     private List<H5TileBase> Path;
+    
+    private bool IsMousePicked;
 
     // Use this for initialization
     void Start()
@@ -37,7 +39,7 @@ public class WorldManager : MonoBehaviour
 
         SetTilesNeighbor();
 
-        FocusCameraOnTile(5, 5);
+        FocusCameraOnTile(5, 5, true);
 
         SpawnCharacter(1, 1, CharacterType.Monarch);
         SpawnCharacter(0, 3, CharacterType.Tanker);
@@ -129,7 +131,7 @@ public class WorldManager : MonoBehaviour
         return h5Character;
     }
 
-    public void FocusCameraOnTile(byte x, byte y)
+    public void FocusCameraOnTile(byte x, byte y, bool setAngle = false)
     {
         var coordinate = LogicHelper.GetCoordinateFromXY(x, y);
         Vector3 lookAt;
@@ -143,19 +145,23 @@ public class WorldManager : MonoBehaviour
         }
 
         var lookVec = new Vector3(CameraFloorDist * 0.7072f, CameraSkyDist, CameraFloorDist * 0.7072f) * -1f;
-        var lookDir = lookVec.normalized;
-        var rightDir = Vector3.Cross(lookDir, Vector3.up).normalized;
-        var upDir = Vector3.Cross(rightDir, lookDir).normalized;
         var camPos = lookAt - lookVec;
-
-        Matrix4x4 camWorld = new Matrix4x4(
-            new Vector4(rightDir.x, rightDir.y, rightDir.z, 0),
-            new Vector4(upDir.x, upDir.y, upDir.z, 0),
-            new Vector4(lookDir.x, lookDir.y, lookDir.z, 0),
-            new Vector4(0, 0, 0, 1));
-
         Camera.main.transform.position = camPos;
-        Camera.main.transform.localRotation = camWorld.rotation;
+
+        if (setAngle)
+        {
+            var lookDir = lookVec.normalized;
+            var rightDir = Vector3.Cross(lookDir, Vector3.up).normalized;
+            var upDir = Vector3.Cross(rightDir, lookDir).normalized;
+
+            Matrix4x4 camWorld = new Matrix4x4(
+                new Vector4(rightDir.x, rightDir.y, rightDir.z, 0),
+                new Vector4(upDir.x, upDir.y, upDir.z, 0),
+                new Vector4(lookDir.x, lookDir.y, lookDir.z, 0),
+                new Vector4(0, 0, 0, 1));
+
+            Camera.main.transform.localRotation = camWorld.rotation;
+        }
     }
 
     void OnMouseClickEvent()
@@ -174,7 +180,7 @@ public class WorldManager : MonoBehaviour
             if (hit.collider != null)
             {
                 var e = TileDic.GetEnumerator();
-                while(e.MoveNext())
+                while (e.MoveNext())
                 {
                     if (e.Current.Value.GO == hit.collider.gameObject)
                     {
@@ -189,7 +195,7 @@ public class WorldManager : MonoBehaviour
                         if (bound != null && bound.Count > 0)
                         {
                             var eb = bound.GetEnumerator();
-                            while(eb.MoveNext())
+                            while (eb.MoveNext())
                             {
                                 if (TileDic.ContainsKey(eb.Current))
                                     TileDic[eb.Current].SetPicked(true);
@@ -202,6 +208,30 @@ public class WorldManager : MonoBehaviour
                         break;
                     }
                 }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            IsMousePicked = true;
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            IsMousePicked = false;
+        }
+
+        if (IsMousePicked)
+        {
+            var camUp = Camera.main.transform.up;
+            var camRight = Camera.main.transform.right;
+            var camForward = Camera.main.transform.forward;
+            var movedCamPos = Camera.main.transform.position - camUp * Input.GetAxis("Mouse Y") * 0.5f - camRight * Input.GetAxis("Mouse X") * 0.5f;
+            var rayStart = movedCamPos - camForward * 100f;
+            Plane camField = new Plane(Vector3.up, -CameraSkyDist);
+            float dist;
+            if (camField.Raycast(new Ray(rayStart, camForward), out dist))
+            {
+                Camera.main.transform.position = rayStart + camForward * dist;
             }
         }
     }

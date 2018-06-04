@@ -48,6 +48,8 @@ public struct Coordinate
 
 public class H5TileBase : H5ObjectBase
 {
+    Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
+
     public static readonly float TileSize = 1f;
 
     private H5TileBase[] m_Neighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
@@ -68,8 +70,8 @@ public class H5TileBase : H5ObjectBase
         Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
 
         var loadMaterial = Resources.Load("Material/Tile") as Material;
-        loadMaterial.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("Tile", "Texture/FT2/Map/st51a"));
-
+        //loadMaterial.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("Tile", "Texture/FT2/Map/st51a"));
+       
         switch (m_TileType)
         {
             case TILE_TYPE.TILE_TYPE_NONE:
@@ -93,30 +95,14 @@ public class H5TileBase : H5ObjectBase
         Coordinate = coord;
         m_Coordinate = new Coordinate(Coordinate);
 
-        Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
-
         var loadMaterial = Resources.Load("Material/Tile") as Material;
         var renderer = GetComponent<MeshRenderer>();
         renderer.material = loadMaterial;
         Material = renderer.material;
 
-        switch (m_TileType)
-        {
-            case TILE_TYPE.TILE_TYPE_NONE:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("TileTest", "Texture/FT2/Map/st51a"));
-                break;
+        Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage(RESOURCE_TYPE.Tile, "Tile"));
 
-            case TILE_TYPE.TILE_TYPE_NORMAL:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("NormalTile", "Texture/FT2/Map/st26f"));
-                break;
-
-            case TILE_TYPE.TILE_TYPE_WATER:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("WaterTile", "Texture/FT2/Map/st33h"));
-                break;
-        }
+        m_TileUV.Set(62.72f, 31.92f, 448f, 272.08f);
 
         Material.SetVector("_UVPos", m_TileUV);
     }

@@ -14,6 +14,12 @@ public class TileEditor : Editor
 
         H5TileBase tile = target as H5TileBase;
 
+        if (CurrentTileType == TILE_TYPE.TILE_TYPE_NONE)
+        {
+            CurrentTileType = tile.m_TileType;
+            tile.Refresh();
+        }
+
         if (CurrentTileType != tile.m_TileType)
         {
             CurrentTileType = tile.m_TileType;

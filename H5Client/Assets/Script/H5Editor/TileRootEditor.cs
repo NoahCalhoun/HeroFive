@@ -13,6 +13,15 @@ public class TileRootEditor : H5ObjectBase
     public byte CountX;
     public byte CountY;
 
+    void Start()
+    {
+        var tiles = GetComponentsInChildren<H5TileBase>();
+        for (int i = 0; i < tiles.Length; ++i)
+        {
+            tiles[i].Refresh();
+        }
+    }
+
     void Update()
     {
 

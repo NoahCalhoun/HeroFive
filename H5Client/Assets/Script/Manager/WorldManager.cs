@@ -179,7 +179,8 @@ public class WorldManager : MonoBehaviour
             {
                 ef.Current.Value.ClearFlag();
             }
-            Path.Clear();
+            if (Path != null)
+                Path.Clear();
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -311,7 +312,7 @@ public class WorldManager : MonoBehaviour
         for (int i = 0; i < tiles.Length; ++i)
         {
             var tile = tiles[i];
-            tile.InitFromLoadMap();
+            tile.Refresh();
             TileDic.Add(LogicHelper.GetCoordinateFromXY(tile.m_Coordinate.x, tile.m_Coordinate.y), tile);
         }
 

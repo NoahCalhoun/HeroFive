@@ -75,7 +75,7 @@
 				|| _Neighbor & 16 && i.uv.x >= 0.9)
 				alphaValue = 0.5;
 
-			col = col * (1 - alphaValue) + fixed4(0, 0, 1, 1) * alphaValue;
+			col = col * (1 - alphaValue) + fixed4(1, 0, 0, 1) * alphaValue;
 		}
 
 		return col;

@@ -49,12 +49,13 @@ public struct Coordinate
 public class H5TileBase : H5ObjectBase
 {
     public static readonly float TileSize = 1f;
+    public static readonly ushort InvalidCoordinate = ushort.MaxValue;
 
     private H5TileBase[] m_Neighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
     public H5TileBase GetNeighbor(TILE_NEIGHBOR _direction) { return m_Neighbors[(int)_direction]; }
     private Material Material;
 
-    private ushort Coordinate;
+    public ushort Coordinate;
     private int NeighborFlag;
     private int SettingFlag;
 
@@ -89,36 +90,53 @@ public class H5TileBase : H5ObjectBase
 
     public void InitTile(TILE_TYPE type, ushort coord)
     {
-        m_TileType = type;
-        Coordinate = coord;
-        m_Coordinate = new Coordinate(Coordinate);
-
-        Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
-
-        var loadMaterial = Resources.Load("Material/Tile") as Material;
-        var renderer = GetComponent<MeshRenderer>();
-        renderer.material = loadMaterial;
-        Material = renderer.material;
-
-        switch (m_TileType)
+        //Coordinate Side
+        if (coord != InvalidCoordinate)
         {
-            case TILE_TYPE.TILE_TYPE_NONE:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("TileTest", "Texture/FT2/Map/st51a"));
-                break;
-
-            case TILE_TYPE.TILE_TYPE_NORMAL:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("NormalTile", "Texture/FT2/Map/st26f"));
-                break;
-
-            case TILE_TYPE.TILE_TYPE_WATER:
-                m_TileUV.Set(0, 0, 1, 1);
-                Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("WaterTile", "Texture/FT2/Map/st33h"));
-                break;
+            Coordinate = coord;
+            m_Coordinate = new Coordinate(Coordinate);
         }
 
-        Material.SetVector("_UVPos", m_TileUV);
+        //Material Side
+        if (type != TILE_TYPE.TILE_TYPE_NONE)
+        {
+            m_TileType = type;
+
+            Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
+
+            var renderer = GetComponent<MeshRenderer>();
+
+        #if UNITY_EDITOR
+            Material = renderer.sharedMaterial;
+        #else
+            if (renderer.material == null)
+            {
+                var loadMaterial = Resources.Load("Material/Tile") as Material;
+                renderer.material = loadMaterial;
+            }
+            Material = renderer.material;
+        #endif
+
+            switch (m_TileType)
+            {
+                case TILE_TYPE.TILE_TYPE_NONE:
+                    m_TileUV.Set(0, 0, 1, 1);
+                    Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("TileTest", "Texture/FT2/Map/st51a"));
+                    break;
+
+                case TILE_TYPE.TILE_TYPE_NORMAL:
+                    m_TileUV.Set(0, 0, 1, 1);
+                    Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("NormalTile", "Texture/FT2/Map/st26f"));
+                    break;
+
+                case TILE_TYPE.TILE_TYPE_WATER:
+                    m_TileUV.Set(0, 0, 1, 1);
+                    Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("WaterTile", "Texture/FT2/Map/st33h"));
+                    break;
+            }
+
+            Material.SetVector("_UVPos", m_TileUV);
+        }
     }
 
     public void SetNeighbor(TILE_NEIGHBOR type, H5TileBase tile)
@@ -189,5 +207,11 @@ public class H5TileBase : H5ObjectBase
         }
 
         return tiles;
+    }
+
+    public void InitFromLoadMap()
+    {
+        m_Coordinate = new Coordinate(Coordinate);
+        Material = GetComponent<MeshRenderer>().sharedMaterial;
     }
 }

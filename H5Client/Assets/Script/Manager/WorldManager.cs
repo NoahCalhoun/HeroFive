@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum OBJECT_TYPE
 {
@@ -29,24 +30,29 @@ public class WorldManager : MonoBehaviour
     {
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
-        for (int i = 0; i < 100; ++i)
-        {
-            byte x = (byte)(i / 10);
-            byte y = (byte)(i % 10);
-            var type = (x >= 4 && x <= 6 && y >= 4 && y <= 6) ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL;
-            SpawnTile(x, y, type);
-        }
+        StartCoroutine(TestInit());
 
-        SetTilesNeighbor();
+        //for (int i = 0; i < 100; ++i)
+        //{
+        //    byte x = (byte)(i / 10);
+        //    byte y = (byte)(i % 10);
+        //    var type = (x >= 4 && x <= 6 && y >= 4 && y <= 6) ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL;
+        //    SpawnTile(x, y, type);
+        //}
 
-        FocusCameraOnTile(5, 5, true);
+        //var e = LoadMapScene("TestMap");
+        //while(e.MoveNext()) { }
 
-        SpawnCharacter(1, 1, CharacterType.Monarch);
-        SpawnCharacter(0, 3, CharacterType.Tanker);
-        SpawnCharacter(3, 0, CharacterType.Dealer);
-        SpawnCharacter(3, 2, CharacterType.Positioner);
-        SpawnCharacter(2, 3, CharacterType.Supporter);
-        SpawnCharacter(6, 7, CharacterType.Monster);
+        //SetTilesNeighbor();
+
+        //FocusCameraOnTile(5, 5, true);
+
+        //SpawnCharacter(1, 1, CharacterType.Monarch);
+        //SpawnCharacter(0, 3, CharacterType.Tanker);
+        //SpawnCharacter(3, 0, CharacterType.Dealer);
+        //SpawnCharacter(3, 2, CharacterType.Positioner);
+        //SpawnCharacter(2, 3, CharacterType.Supporter);
+        //SpawnCharacter(6, 7, CharacterType.Monster);
     }
 
     // Update is called once per frame
@@ -173,6 +179,7 @@ public class WorldManager : MonoBehaviour
             {
                 ef.Current.Value.ClearFlag();
             }
+            Path.Clear();
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -293,6 +300,42 @@ public class WorldManager : MonoBehaviour
         }
     }
 
+    IEnumerator LoadMapScene(string name)
+    {
+        ClearTileDic();
+
+        var load = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+        while (load.isDone == false) { yield return null; }
+
+        var tiles = GameObject.FindGameObjectWithTag("TileRoot").GetComponent<TileRootEditor>().GetComponentsInChildren<H5TileBase>();
+        for (int i = 0; i < tiles.Length; ++i)
+        {
+            var tile = tiles[i];
+            tile.InitFromLoadMap();
+            TileDic.Add(LogicHelper.GetCoordinateFromXY(tile.m_Coordinate.x, tile.m_Coordinate.y), tile);
+        }
+
+        yield break;
+    }
+
+    IEnumerator TestInit()
+    {
+        yield return StartCoroutine(LoadMapScene("TestMap"));
+
+        SetTilesNeighbor();
+
+        FocusCameraOnTile(5, 5, true);
+
+        SpawnCharacter(1, 1, CharacterType.Monarch);
+        SpawnCharacter(0, 3, CharacterType.Tanker);
+        SpawnCharacter(3, 0, CharacterType.Dealer);
+        SpawnCharacter(3, 2, CharacterType.Positioner);
+        SpawnCharacter(2, 3, CharacterType.Supporter);
+        SpawnCharacter(6, 7, CharacterType.Monster);
+
+        yield break;
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -304,5 +347,15 @@ public class WorldManager : MonoBehaviour
                 Gizmos.DrawLine(Path[i].TM.position, Path[i + 1].TM.position);
             }
         }
+    }
+
+    void ClearTileDic()
+    {
+        var e = TileDic.GetEnumerator();
+        while(e.MoveNext())
+        {
+            DestroyImmediate(e.Current.Value.GO);
+        }
+        TileDic.Clear();
     }
 }

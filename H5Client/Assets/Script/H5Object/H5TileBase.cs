@@ -122,21 +122,39 @@ public class H5TileBase : H5ObjectBase
 
             Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage(RESOURCE_TYPE.Tile, "Tile"));
 
+            float sliceX = 7f;              // 이미지 X축 7칸
+            float sliceY = 9.5f;            // 이미지 Y축 9.5칸
+            float sizeX = 1f / sliceX;      // 이미지 X축 배율
+            float sizeY = 1f / sliceY;      // 이미지 Y축 배율
+
+            float offsetIndexX = 0f;
+            float offsetIndexY = 0f;
+
             switch (m_TileType)
             {
-                case TILE_TYPE.TILE_TYPE_NONE:
-                    m_TileUV.Set(0, 0, 1, 1);
-                    break;
-
                 case TILE_TYPE.TILE_TYPE_NORMAL:
-                    m_TileUV.Set(1f / 7f, 1f / 9.5f, 1f / 7f * 0f, 1f / 9.5f * 8.5f);
+                    {
+                        offsetIndexX = 0f;        // 7칸 중 1번째 (인덱스 = 1 - 1 = 0)
+                        offsetIndexY = 8.5f;      // 9.5칸 중 9.5번째 (인덱스 9.5 - 1 = 8.5)
+                    }
                     break;
 
                 case TILE_TYPE.TILE_TYPE_WATER:
-                    m_TileUV.Set(1f / 7f, 1f / 9.5f, 1f / 7f * 2f, 1f / 9.5f * 8.5f);
+                    {
+                        offsetIndexX = 2f;        // 7칸 중 3번째 (인덱스 = 3 - 1 = 2)
+                        offsetIndexY = 8.5f;      // 9.5칸 중 9.5번째 (인덱스 9.5 - 1 = 8.5)
+                    }
                     break;
+
+                default:
+                    {
+                        m_TileUV.Set(0, 0, 1, 1);
+                        Material.SetVector("_UVPos", m_TileUV);
+                    }
+                    return;
             }
 
+            m_TileUV.Set(sizeX, sizeY, sizeX * offsetIndexX, sizeY * offsetIndexY);
             Material.SetVector("_UVPos", m_TileUV);
         }
     }

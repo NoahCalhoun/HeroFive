@@ -31,28 +31,6 @@ public class WorldManager : MonoBehaviour
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
         StartCoroutine(TestInit());
-
-        //for (int i = 0; i < 100; ++i)
-        //{
-        //    byte x = (byte)(i / 10);
-        //    byte y = (byte)(i % 10);
-        //    var type = (x >= 4 && x <= 6 && y >= 4 && y <= 6) ? TILE_TYPE.TILE_TYPE_WATER : TILE_TYPE.TILE_TYPE_NORMAL;
-        //    SpawnTile(x, y, type);
-        //}
-
-        //var e = LoadMapScene("TestMap");
-        //while(e.MoveNext()) { }
-
-        //SetTilesNeighbor();
-
-        //FocusCameraOnTile(5, 5, true);
-
-        //SpawnCharacter(1, 1, CharacterType.Monarch);
-        //SpawnCharacter(0, 3, CharacterType.Tanker);
-        //SpawnCharacter(3, 0, CharacterType.Dealer);
-        //SpawnCharacter(3, 2, CharacterType.Positioner);
-        //SpawnCharacter(2, 3, CharacterType.Supporter);
-        //SpawnCharacter(6, 7, CharacterType.Monster);
     }
 
     // Update is called once per frame
@@ -199,7 +177,7 @@ public class WorldManager : MonoBehaviour
                         if (e.Current.Value.IsWalkable == false)
                             return;
 
-                        var bound = e.Current.Value.GetBound(0);
+                        var bound = e.Current.Value.GetBound(2);
                         if (bound != null && bound.Count > 0)
                         {
                             var eb = bound.GetEnumerator();

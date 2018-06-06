@@ -55,7 +55,8 @@ public class H5TileBase : H5ObjectBase
 
     private H5TileBase[] m_Neighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
     public H5TileBase GetNeighbor(TILE_NEIGHBOR _direction) { return m_Neighbors[(int)_direction]; }
-    private Material Material;
+    private Material TileRendererMaterial;
+    private Material TileMaterial;
 
     public ushort Coordinate;
     private int NeighborFlag;
@@ -85,7 +86,8 @@ public class H5TileBase : H5ObjectBase
         }
 
         loadMaterial.SetVector("_UVPos", m_TileUV);
-        GetComponent<MeshRenderer>().material = loadMaterial;
+        var h5Renderer = GetComponentInChildren<H5TileRenderer>();
+        h5Renderer.GO.GetComponent<MeshRenderer>().material = loadMaterial;
 
         TM.localScale = new Vector3(5, 5, 1);
     }
@@ -106,21 +108,36 @@ public class H5TileBase : H5ObjectBase
 
             Vector4 m_TileUV = new Vector4(0, 0, 0, 0);
 
-            var renderer = GetComponent<MeshRenderer>();
+            var tileRenderer = GetComponent<MeshRenderer>();
 
-            bool noMat = renderer.sharedMaterial == null;
+            bool noMat = tileRenderer.sharedMaterial == null;
             if (noMat)
             {
                 var loadMaterial = Resources.Load("Material/Tile") as Material;
+                tileRenderer.material = loadMaterial;
+            }
+#if UNITY_EDITOR
+            TileMaterial = noMat ? tileRenderer.material : tileRenderer.sharedMaterial;
+#else
+            TileMaterial = tileRenderer.material;
+#endif
+            //-----------------------------------------------------------
+            var h5Renderer = GetComponentInChildren<H5TileRenderer>();
+            var renderer = h5Renderer.GO.GetComponent<MeshRenderer>();
+
+            noMat = renderer.sharedMaterial == null;
+            if (noMat)
+            {
+                var loadMaterial = Resources.Load("Material/TileRenderer") as Material;
                 renderer.material = loadMaterial;
             }
-        #if UNITY_EDITOR
-            Material = noMat ? renderer.material : renderer.sharedMaterial;
-        #else
-            Material = renderer.material;
-        #endif
+#if UNITY_EDITOR
+            TileRendererMaterial = noMat ? renderer.material : renderer.sharedMaterial;
+#else
+            TileRendererMaterial = renderer.material;
+#endif
 
-            Material.SetTexture("_MainTex", ResourceManager.Instance.LoadImage(RESOURCE_TYPE.Tile, "Tile"));
+            TileRendererMaterial.SetTexture("_MainTex", ResourceManager.Instance.LoadImage(RESOURCE_TYPE.Tile, "Tile"));
 
             float sliceX = 7f;              // 이미지 X축 7칸
             float sliceY = 9.5f;            // 이미지 Y축 9.5칸
@@ -149,13 +166,14 @@ public class H5TileBase : H5ObjectBase
                 default:
                     {
                         m_TileUV.Set(0, 0, 1, 1);
-                        Material.SetVector("_UVPos", m_TileUV);
+                        TileRendererMaterial.SetVector("_UVPos", m_TileUV);
                     }
                     return;
             }
 
-            m_TileUV.Set(sizeX, sizeY, sizeX * offsetIndexX, sizeY * offsetIndexY);
-            Material.SetVector("_UVPos", m_TileUV);
+            m_TileUV.Set(sizeX, sizeY, offsetIndexX, offsetIndexY);
+            TileRendererMaterial.SetVector("_UVPos", m_TileUV);
+            TileRendererMaterial.SetColor("_CutoffColor", new Color32(0, 0, 255, 255));
         }
     }
 
@@ -196,7 +214,7 @@ public class H5TileBase : H5ObjectBase
     {
         if (SettingFlag != NeighborFlag)
         {
-            Material.SetInt("_Neighbor", NeighborFlag);
+            TileMaterial.SetInt("_Neighbor", NeighborFlag);
             SettingFlag = NeighborFlag;
         }
     }

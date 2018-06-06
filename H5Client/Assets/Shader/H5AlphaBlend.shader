@@ -1,10 +1,9 @@
-﻿Shader "H5/Tile"
+﻿Shader "H5/AlphaBlend"
 {
 	Properties
 	{
 		_MainTex("Texture", 2D) = "" {}
-	_Color("Color", Color) = (0, 0, 0, 0)
-		_Neighbor("Neighbor", Int) = 0
+	_Color("Color", Color) = (1, 1, 1, 1)
 	}
 		SubShader
 	{
@@ -39,7 +38,6 @@
 	sampler2D _MainTex;
 	float4 _MainTex_ST;
 	fixed4 _Color;
-	int _Neighbor;
 
 	v2f vert(appdata v)
 	{
@@ -52,24 +50,8 @@
 
 	fixed4 frag(v2f i) : SV_Target
 	{
-		fixed4 col = /*tex2D(_MainTex, i.uv) * */_Color;
-
-		if (_Neighbor & 32)
-		{
-			col.a = 0.2;
-
-			if (_Neighbor & 2 && i.uv.y >= 0.9
-				|| _Neighbor & 4 && i.uv.y <= 0.1
-				|| _Neighbor & 8 && i.uv.x <= 0.1
-				|| _Neighbor & 16 && i.uv.x >= 0.9)
-				col.a = 0.5;
-		}
-		else
-		{
-			col.a = 0;
-		}
-
-		return col;
+		fixed4 col = tex2D(_MainTex, i.uv) * _Color;
+	return col;
 	}
 		ENDCG
 	}

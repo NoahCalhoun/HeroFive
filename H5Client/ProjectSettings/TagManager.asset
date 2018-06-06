@@ -6,6 +6,7 @@ TagManager:
   tags:
   - World
   - TileRoot
+  - UICamera
   layers:
   - Default
   - TransparentFX

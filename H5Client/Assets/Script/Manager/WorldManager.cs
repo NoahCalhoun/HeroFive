@@ -28,9 +28,6 @@ public class WorldManager : MonoBehaviour
     
     private bool IsMousePicked;
 
-    //UIManager에게 위임해야함
-    public Transform UIRoot;
-
     H5CharacterBase test;
 
     // Use this for initialization
@@ -39,7 +36,6 @@ public class WorldManager : MonoBehaviour
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
         StartCoroutine(TestInit());
-        //StartCoroutine(LoadUI());
     }
 
     // Update is called once per frame
@@ -344,19 +340,6 @@ public class WorldManager : MonoBehaviour
             DestroyImmediate(e.Current.Value.GO);
         }
         TileDic.Clear();
-    }
-
-    IEnumerator LoadUI()
-    {
-        var load = SceneManager.LoadSceneAsync("TestUI", LoadSceneMode.Additive);
-        while (load.isDone == false) { yield return null; }
-
-        var uiRoot = GameObject.FindGameObjectWithTag("UICamera");
-        var ui = uiRoot.GetComponentInChildren<H5WindowBase>();
-        ui.TM.SetParent(UIRoot);
-
-        load = SceneManager.UnloadSceneAsync("TestUI");
-        while (load.isDone == false) { yield return null; }
     }
 
     public H5TileBase GetTile(byte _x, byte _y)

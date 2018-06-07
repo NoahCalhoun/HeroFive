@@ -83,7 +83,7 @@ public static class LogicHelper
 
     public static bool MousePickingOnWorld(out RaycastHit hit, int layerMask)
     {
-        var uiCamera = WorldManager.Instance.UIRoot.gameObject.GetComponent<Camera>();
+        var uiCamera = UIManager.Instance.UICameraRoot.gameObject.GetComponent<Camera>();
         var ray = uiCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit uiHit;
         Physics.Raycast(ray, out uiHit, float.PositiveInfinity, -1);

@@ -12,6 +12,9 @@ public enum OBJECT_TYPE
 
 public class WorldManager : MonoBehaviour
 {
+    private static WorldManager mInstance;
+    public static WorldManager Instance { get { if (mInstance == null) mInstance = GameObject.FindGameObjectWithTag("World").GetComponent<WorldManager>(); return mInstance; } }
+
     private Transform WorldRoot;
     public Transform TileRoot;
     public Transform CharacterRoot;
@@ -34,7 +37,7 @@ public class WorldManager : MonoBehaviour
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
 
         StartCoroutine(TestInit());
-        StartCoroutine(LoadUI());
+        //StartCoroutine(LoadUI());
     }
 
     // Update is called once per frame
@@ -163,11 +166,9 @@ public class WorldManager : MonoBehaviour
             }
             if (Path != null)
                 Path.Clear();
-
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
             RaycastHit hit;
-            Physics.Raycast(ray, out hit, float.PositiveInfinity, 1 << 10);
-            if (hit.collider != null)
+            if (LogicHelper.MousePickingOnWorld(out hit, 1 << 10) && hit.collider != null)
             {
                 var e = TileDic.GetEnumerator();
                 while (e.MoveNext())

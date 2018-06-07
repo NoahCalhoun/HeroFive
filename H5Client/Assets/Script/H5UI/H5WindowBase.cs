@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class H5WindowBase : H5ObjectBase
+public abstract class H5WindowBase : H5ObjectBase
 {
+    public abstract UIWindowType Type { get; }
+
     public override void InitObject()
     {
     }

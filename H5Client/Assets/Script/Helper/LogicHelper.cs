@@ -80,4 +80,21 @@ public static class LogicHelper
         hostX += 1;
         return GetCoordinateFromXY(hostX, hostY);
     }
+
+    public static bool MousePickingOnWorld(out RaycastHit hit, int layerMask)
+    {
+        var uiCamera = WorldManager.Instance.UIRoot.gameObject.GetComponent<Camera>();
+        var ray = uiCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit uiHit;
+        Physics.Raycast(ray, out uiHit, float.PositiveInfinity, -1);
+        if (uiHit.collider != null)
+        {
+            hit = new RaycastHit();
+            return false;
+        }
+
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out hit, float.PositiveInfinity, layerMask);
+        return true;
+    }
 }

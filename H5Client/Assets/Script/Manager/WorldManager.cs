@@ -31,6 +31,8 @@ public class WorldManager : MonoBehaviour
     //UIManager에게 위임해야함
     public Transform UIRoot;
 
+    H5CharacterBase test;
+
     // Use this for initialization
     void Start()
     {
@@ -198,6 +200,7 @@ public class WorldManager : MonoBehaviour
 
                         Path = MoveManager.Instance.FindPath(TileDic[(1 << 8) | 1], e.Current.Value);
 
+                        test.MoveTo(bx, by);
                         break;
                     }
                 }
@@ -312,7 +315,7 @@ public class WorldManager : MonoBehaviour
 
         FocusCameraOnTile(5, 5, true);
 
-        SpawnCharacter(1, 1, CharacterType.Monarch);
+        test = SpawnCharacter(1, 1, CharacterType.Monarch);
         SpawnCharacter(0, 3, CharacterType.Tanker);
         SpawnCharacter(3, 0, CharacterType.Dealer);
         SpawnCharacter(3, 2, CharacterType.Positioner);
@@ -366,5 +369,10 @@ public class WorldManager : MonoBehaviour
     public H5TileBase GetTile(ushort _xy)
     {
         return TileDic[_xy];
+    }
+
+    public H5TileBase GetTile(Transform _tm)
+    {
+        return TileDic[LogicHelper.GetCoordinateFromXY((byte)_tm.position.x, (byte)_tm.position.z)];
     }
 }

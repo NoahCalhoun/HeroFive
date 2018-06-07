@@ -15,4 +15,14 @@ public class H5TestObject : H5ObjectBase
         TM.localScale = new Vector3(5, 5, 1);
         m_MovementSystem = new MovementSystem(TM);
     }
+
+    public void MoveTo(byte _x, byte _y)
+    {
+        m_MovementSystem.CalcMovePath(_x, _y);
+    }
+
+    private void Update()
+    {
+        m_MovementSystem.Update();
+    }
 }

@@ -33,6 +33,7 @@ public class MoveManager
     HashSet<ushort> CloseSet = new HashSet<ushort>();
     SortedDictionary<long, List<AStarNode>> SortedDic = new SortedDictionary<long, List<AStarNode>>();
 
+    // List의 끝이 타겟 타일이다.
     public List<H5TileBase> FindPath(H5TileBase _start, H5TileBase _target)
     {
         PathList.Clear();

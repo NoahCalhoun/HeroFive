@@ -12,6 +12,9 @@ public enum OBJECT_TYPE
 
 public class WorldManager : MonoBehaviour
 {
+    private static WorldManager mInstance;
+    public static WorldManager Instance { get { if (mInstance == null) mInstance = GameObject.FindGameObjectWithTag("World").GetComponent<WorldManager>(); ; return mInstance; } }
+
     private Transform WorldRoot;
     public Transform TileRoot;
     public Transform CharacterRoot;
@@ -353,5 +356,15 @@ public class WorldManager : MonoBehaviour
 
         load = SceneManager.UnloadSceneAsync("TestUI");
         while (load.isDone == false) { yield return null; }
+    }
+
+    public H5TileBase GetTile(byte _x, byte _y)
+    {
+        return TileDic[LogicHelper.GetCoordinateFromXY(_x, _y)];
+    }
+
+    public H5TileBase GetTile(ushort _xy)
+    {
+        return TileDic[_xy];
     }
 }

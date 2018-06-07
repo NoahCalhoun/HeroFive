@@ -18,12 +18,16 @@ public class MovementSystem {
 
     public void CalcMovePath(byte _x, byte _y)
     {
-        Path = MoveManager.Instance.FindPath(WorldManager.Instance.GetTile(m_TM), WorldManager.Instance.GetTile(_x, _y));
+        H5TileBase Start = CurTarget == null ? WorldManager.Instance.GetTile(m_TM) : CurTarget;
+        
+        Path = MoveManager.Instance.FindPath(Start, WorldManager.Instance.GetTile(_x, _y));
     }
 
     public void CalcMovePath(ushort _xy)
     {
-        Path = MoveManager.Instance.FindPath(WorldManager.Instance.GetTile(m_TM), WorldManager.Instance.GetTile(_xy));
+        H5TileBase Start = CurTarget == null ? WorldManager.Instance.GetTile(m_TM) : CurTarget;
+
+        Path = MoveManager.Instance.FindPath(Start, WorldManager.Instance.GetTile(_xy));
     }
 
     public void Update()
@@ -33,7 +37,7 @@ public class MovementSystem {
 
     private void MoveToTarget()
     {
-        if (Path.Count <= 0 && CurTarget == null) return;
+        if ((Path == null || Path.Count <= 0) && CurTarget == null) return;
 
         if (CurTarget == null)
         {
@@ -45,7 +49,7 @@ public class MovementSystem {
         Dir.y = 0;
         Vector3 Move = Dir.normalized * m_Speed * Time.deltaTime;
 
-        if (Move.magnitude > Dir.magnitude)
+        if (Move.magnitude >= Dir.magnitude)
         {
             Move = Dir;
             CurTarget = null;

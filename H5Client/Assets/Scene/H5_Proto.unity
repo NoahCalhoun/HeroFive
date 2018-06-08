@@ -529,4 +529,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TileRoot: {fileID: 597863774}
   CharacterRoot: {fileID: 2013405767}
-  UIRoot: {fileID: 443074179}

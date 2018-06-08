@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementSystem {
-    
+public class MovementSystem
+{
     private Transform m_TM;
     private List<H5TileBase> Path;
     private H5TileBase CurTarget;
@@ -19,7 +19,7 @@ public class MovementSystem {
     public void CalcMovePath(byte _x, byte _y)
     {
         H5TileBase Start = CurTarget == null ? WorldManager.Instance.GetTile(m_TM) : CurTarget;
-        
+
         Path = MoveManager.Instance.FindPath(Start, WorldManager.Instance.GetTile(_x, _y));
     }
 

@@ -60,6 +60,12 @@ public class H5CharacterBase : H5ObjectBase
                 renderer.material.color = new Color32(255, 0, 0, 255);
                 break;
         }
+
+        var bannerPrefab = Resources.Load("Prefab/Widget/Banner") as GameObject;
+        var banner = GameObject.Instantiate(bannerPrefab);
+        banner.GetComponent<H5WidgetBanner>().InitBanner(this);
+        banner.transform.SetParent(UIManager.Instance.UICameraRoot);
+        banner.transform.localScale = Vector3.one;
     }
 
     // Use this for initialization

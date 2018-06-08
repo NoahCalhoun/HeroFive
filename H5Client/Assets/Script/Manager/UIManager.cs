@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
             var uiRoot = GameObject.FindGameObjectWithTag("UICamera");
             var ui = uiRoot.GetComponentInChildren<H5WindowBase>();
             ui.TM.SetParent(UICameraRoot);
-            //ui.GO.SetActive(false);
+            ui.GO.SetActive(false);
             mWindowDic.Add(type, ui);
 
             load = SceneManager.UnloadSceneAsync(name);
@@ -48,5 +48,33 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public bool OpenWindow(UIWindowType type)
+    {
+        if (mWindowDic.ContainsKey(type) == false || mWindowDic[type].GO.activeInHierarchy == true)
+            return false;
+
+        mWindowDic[type].GO.SetActive(true);
+        mWindowDic[type].OnOpenWindow();
+        return true;
+    }
+
+    public bool CloseWindow(UIWindowType type)
+    {
+        if (mWindowDic.ContainsKey(type) == false || mWindowDic[type].GO.activeInHierarchy == false)
+            return false;
+
+        mWindowDic[type].GO.SetActive(false);
+        mWindowDic[type].OnCloseWindow();
+        return true;
+    }
+
+    public bool IsWindowOpened(UIWindowType type)
+    {
+        if (mWindowDic.ContainsKey(type) == false)
+            return false;
+
+        return mWindowDic[type].GO.activeInHierarchy == true;
     }
 }

@@ -166,7 +166,19 @@ public class WorldManager : MonoBehaviour
                 Path.Clear();
             
             RaycastHit hit;
-            if (LogicHelper.MousePickingOnWorld(out hit, 1 << 10) && hit.collider != null)
+            if (LogicHelper.MousePickingOnWorld(out hit, 1 << 11) && hit.collider != null)
+            {
+                var character = hit.collider.gameObject.GetComponentInParent<H5CharacterBase>();
+
+                if (character.Type == CharacterType.Monarch)
+                {
+                    if (UIManager.Instance.IsWindowOpened(UIWindowType.TestUI) == false)
+                        UIManager.Instance.OpenWindow(UIWindowType.TestUI);
+                    else
+                        UIManager.Instance.CloseWindow(UIWindowType.TestUI);
+                }
+            }
+            else if (LogicHelper.MousePickingOnWorld(out hit, 1 << 10) && hit.collider != null)
             {
                 var e = TileDic.GetEnumerator();
                 while (e.MoveNext())

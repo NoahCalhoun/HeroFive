@@ -9,4 +9,14 @@ public abstract class H5WindowBase : H5ObjectBase
     public override void InitObject()
     {
     }
+
+    public virtual void OnOpenWindow()
+    {
+
+    }
+
+    public virtual void OnCloseWindow()
+    {
+
+    }
 }

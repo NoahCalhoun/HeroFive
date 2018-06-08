@@ -16,7 +16,7 @@ public enum CharacterType
 
 public class H5CharacterBase : H5ObjectBase
 {
-    private CharacterType Type;
+    public CharacterType Type { get; protected set; }
 
     MovementSystem m_MovementSystem;
 

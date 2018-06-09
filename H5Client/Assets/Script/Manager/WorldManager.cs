@@ -25,7 +25,7 @@ public class WorldManager : MonoBehaviour
     private float CameraSkyDist = 8f;
 
     private List<H5TileBase> Path;
-    
+
     private bool IsMousePicked;
 
     H5CharacterBase test;
@@ -164,18 +164,23 @@ public class WorldManager : MonoBehaviour
             }
             if (Path != null)
                 Path.Clear();
-            
+
             RaycastHit hit;
             if (LogicHelper.MousePickingOnWorld(out hit, 1 << 11) && hit.collider != null)
             {
                 var character = hit.collider.gameObject.GetComponentInParent<H5CharacterBase>();
 
-                if (character.Type == CharacterType.Monarch)
+                if (character != null)
                 {
                     if (UIManager.Instance.IsWindowOpened(UIWindowType.TestUI) == false)
-                        UIManager.Instance.OpenWindow(UIWindowType.TestUI);
+                    {
+                        var data = new H5TestUI.H5TestUIData() { CharacterType = character.Type };
+                        UIManager.Instance.OpenWindow(UIWindowType.TestUI, data);
+                    }
                     else
+                    {
                         UIManager.Instance.CloseWindow(UIWindowType.TestUI);
+                    }
                 }
             }
             else if (LogicHelper.MousePickingOnWorld(out hit, 1 << 10) && hit.collider != null)
@@ -253,7 +258,7 @@ public class WorldManager : MonoBehaviour
                 var neighborx = curx;
                 var neighbory = cury;
 
-                switch(i)
+                switch (i)
                 {
                     case TILE_NEIGHBOR.Up:
                         neighbory += 1;
@@ -283,7 +288,7 @@ public class WorldManager : MonoBehaviour
             return;
 
         var e = bound.GetEnumerator();
-        while(e.MoveNext())
+        while (e.MoveNext())
         {
             var curCoord = e.Current;
             for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
@@ -347,7 +352,7 @@ public class WorldManager : MonoBehaviour
     void ClearTileDic()
     {
         var e = TileDic.GetEnumerator();
-        while(e.MoveNext())
+        while (e.MoveNext())
         {
             DestroyImmediate(e.Current.Value.GO);
         }

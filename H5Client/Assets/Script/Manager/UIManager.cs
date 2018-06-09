@@ -50,12 +50,14 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public bool OpenWindow(UIWindowType type)
+    public bool OpenWindow(UIWindowType type, H5WindowBase.H5WindowDataBase data = null)
     {
         if (mWindowDic.ContainsKey(type) == false || mWindowDic[type].GO.activeInHierarchy == true)
             return false;
 
         mWindowDic[type].GO.SetActive(true);
+        if (data != null)
+            mWindowDic[type].SetWindowData(data);
         mWindowDic[type].OnOpenWindow();
         return true;
     }

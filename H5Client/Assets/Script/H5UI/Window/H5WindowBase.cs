@@ -4,6 +4,11 @@ using UnityEngine;
 
 public abstract class H5WindowBase : H5ObjectBase
 {
+    public abstract class H5WindowDataBase
+    {
+        public abstract UIWindowType Type { get; }
+    }
+
     public abstract UIWindowType Type { get; }
 
     public override void InitObject()
@@ -16,6 +21,11 @@ public abstract class H5WindowBase : H5ObjectBase
     }
 
     public virtual void OnCloseWindow()
+    {
+
+    }
+    
+    public virtual void SetWindowData(H5WindowDataBase data)
     {
 
     }

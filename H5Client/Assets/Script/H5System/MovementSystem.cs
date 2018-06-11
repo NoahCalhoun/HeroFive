@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementSystem
+public class MovementSystem : H5SystemBase
 {
     private Transform m_TM;
     private List<H5TileBase> Path;
@@ -10,9 +10,10 @@ public class MovementSystem
 
     private float m_Speed;
 
-    public MovementSystem(Transform _TM)
+    public override void InitSystem(H5CharacterBase owner)
     {
-        this.m_TM = _TM;
+        base.InitSystem(owner);
+        m_TM = owner.TM;
         m_Speed = 1.1f;
     }
 

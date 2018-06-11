@@ -28,7 +28,8 @@ public class H5CharacterBase : H5ObjectBase
     {
         Type = type;
 
-        m_MovementSystem = new MovementSystem(TM);
+        m_MovementSystem = new MovementSystem();
+        m_MovementSystem.InitSystem(this);
 
         var loadMaterial = Resources.Load("Material/Character") as Material;
         var renderer = GetComponentInChildren<MeshRenderer>();

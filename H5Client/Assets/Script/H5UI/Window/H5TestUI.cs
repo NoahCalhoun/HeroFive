@@ -93,5 +93,6 @@ public class H5TestUI : H5WindowBase
         }
 
         Texture.mainTexture = FirstTexture;
+        TestBool = true;
     }
 }

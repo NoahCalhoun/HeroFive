@@ -13,7 +13,7 @@ public class H5TestObject : H5ObjectBase
         GetComponent<MeshRenderer>().material = loadMaterial;
 
         TM.localScale = new Vector3(5, 5, 1);
-        m_MovementSystem = new MovementSystem(TM);
+        m_MovementSystem = new MovementSystem();
     }
 
     public void MoveTo(byte _x, byte _y)

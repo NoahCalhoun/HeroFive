@@ -49,35 +49,35 @@ public static class LogicHelper
         }
     }
 
-    public static ushort GetUpCoordinate(this ushort host)
+    public static ushort GetUpCoordinate(this ushort host, byte count = 1)
     {
         var hostX = GetXFromCoordinate(host);
         var hostY = GetYFromCoordinate(host);
-        hostY += 1;
+        hostY += count;
         return GetCoordinateFromXY(hostX, hostY);
     }
 
-    public static ushort GetDownCoordinate(this ushort host)
+    public static ushort GetDownCoordinate(this ushort host, byte count = 1)
     {
         var hostX = GetXFromCoordinate(host);
         var hostY = GetYFromCoordinate(host);
-        hostY -= 1;
+        hostY -= count;
         return GetCoordinateFromXY(hostX, hostY);
     }
 
-    public static ushort GetLeftCoordinate(this ushort host)
+    public static ushort GetLeftCoordinate(this ushort host, byte count = 1)
     {
         var hostX = GetXFromCoordinate(host);
         var hostY = GetYFromCoordinate(host);
-        hostX -= 1;
+        hostX -= count;
         return GetCoordinateFromXY(hostX, hostY);
     }
 
-    public static ushort GetRightCoordinate(this ushort host)
+    public static ushort GetRightCoordinate(this ushort host, byte count = 1)
     {
         var hostX = GetXFromCoordinate(host);
         var hostY = GetYFromCoordinate(host);
-        hostX += 1;
+        hostX += count;
         return GetCoordinateFromXY(hostX, hostY);
     }
 

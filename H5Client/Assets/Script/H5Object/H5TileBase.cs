@@ -10,6 +10,15 @@ public enum TILE_TYPE
     TILE_TYPE_WATER,
 }
 
+public enum TILE_DIR
+{
+    Up,
+    Down,
+    Left,
+    Right,
+    Max
+}
+
 public enum TILE_NEIGHBOR
 {
     Up,

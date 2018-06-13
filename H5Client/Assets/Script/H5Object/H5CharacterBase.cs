@@ -85,4 +85,9 @@ public class H5CharacterBase : H5ObjectBase
     {
         m_MovementSystem.SetWalk(_x, _y);
     }
+
+    public void KnockBackTo(TILE_DIR dir, byte count)
+    {
+        m_MovementSystem.SetKnockBack(dir, count);
+    }
 }

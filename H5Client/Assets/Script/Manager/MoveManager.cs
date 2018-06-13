@@ -33,6 +33,23 @@ public class MoveManager
     HashSet<ushort> CloseSet = new HashSet<ushort>();
     SortedDictionary<long, List<AStarNode>> SortedDic = new SortedDictionary<long, List<AStarNode>>();
 
+    public H5TileBase FindStraight(H5TileBase _start, TILE_DIR _dir, byte _count)
+    {
+        H5TileBase result = null;
+        H5TileBase neighbor = _start;
+
+        for (byte i = 0; i < _count; ++i)
+        {
+            neighbor = neighbor.GetNeighbor((TILE_NEIGHBOR)_dir);
+
+            if (neighbor == null || !neighbor.IsWalkable ) break;
+
+            result = neighbor;
+        }
+
+        return result;
+    }
+
     // List의 끝이 타겟 타일이다.
     public List<H5TileBase> FindPath(H5TileBase _start, H5TileBase _target)
     {

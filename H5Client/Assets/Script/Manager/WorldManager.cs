@@ -221,6 +221,7 @@ public class WorldManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             IsMousePicked = true;
+            test.KnockBackTo(TILE_DIR.Up, 5);
         }
         else if (Input.GetMouseButtonUp(1))
         {

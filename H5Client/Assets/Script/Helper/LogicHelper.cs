@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Text;
 
 using UnityEngine;
 
@@ -96,5 +95,10 @@ public static class LogicHelper
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out hit, float.PositiveInfinity, layerMask);
         return true;
+    }
+
+    public static void Clear(this StringBuilder sb)
+    {
+        sb.Length = 0;
     }
 }

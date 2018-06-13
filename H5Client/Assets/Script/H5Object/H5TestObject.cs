@@ -18,7 +18,6 @@ public class H5TestObject : H5ObjectBase
 
     public void MoveTo(byte _x, byte _y)
     {
-        m_MovementSystem.CalcMovePath(_x, _y);
     }
 
     private void Update()

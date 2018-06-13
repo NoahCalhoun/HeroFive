@@ -83,6 +83,6 @@ public class H5CharacterBase : H5ObjectBase
 
     public void MoveTo(byte _x, byte _y)
     {
-        m_MovementSystem.CalcMovePath(_x, _y);
+        m_MovementSystem.SetWalk(_x, _y);
     }
 }

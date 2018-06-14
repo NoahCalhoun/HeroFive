@@ -44,27 +44,15 @@ public class WorldManager : MonoBehaviour
         OnMouseClickEvent();
     }
 
-    public H5ObjectBase SpawnTestObject(float x, float z, string objwhere, OBJECT_TYPE objtype)
+    public H5ObjectBase SpawnTestObject(float x, float z)
     {
-        var testObjectPrefab = Resources.Load(objwhere) as GameObject;
+        var testObjectPrefab = Resources.Load("Prefab/TestObject") as GameObject;
         var testObject = GameObject.Instantiate(testObjectPrefab);
 
         if (testObject == null)
             return null;
-
-        H5ObjectBase h5Test = null;
-
-        switch (objtype)
-        {
-            case OBJECT_TYPE.OBJECT_TEST:
-                h5Test = testObject.AddComponent<H5TestObject>();
-                break;
-
-            case OBJECT_TYPE.OBJECT_TILE:
-                h5Test = testObject.AddComponent<H5TileBase>();
-                break;
-        }
-
+        
+        var h5Test = testObject.AddComponent<H5TestObject>();
         if (h5Test == null)
             return null;
 

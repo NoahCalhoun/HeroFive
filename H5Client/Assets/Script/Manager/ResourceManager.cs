@@ -18,12 +18,21 @@ public enum Episode
     FT2,
 }
 
+public static class ResourceHelper
+{
+    public static Sprite GetSprite(this Texture2D texture, string name)
+    {
+        return ResourceManager.Instance.GetSprite(texture, name);
+    }
+}
+
 public class ResourceManager
 {
     private static ResourceManager mInstance;
     public static ResourceManager Instance { get { if (mInstance == null) mInstance = new ResourceManager(); return mInstance; } }
 
     private Dictionary<string, Texture2D> mTextureDic = new Dictionary<string, Texture2D>();
+    private Dictionary<Texture2D, Dictionary<string, Sprite>> mSpriteDic = new Dictionary<Texture2D, Dictionary<string, Sprite>>();
 
     StringBuilder sb = new StringBuilder();
 
@@ -57,6 +66,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
+            LoadSprite(sb.ToString(), texture);
             return texture;
         }
 
@@ -65,6 +75,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
+            LoadSprite(sb.ToString(), texture);
             return texture;
         }
 
@@ -73,6 +84,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
+            LoadSprite(sb.ToString(), texture);
             return texture;
         }
 
@@ -89,6 +101,7 @@ public class ResourceManager
 
         if (mTextureDic.ContainsKey(key))
         {
+            UnloadSprite(mTextureDic[key]);
             Resources.UnloadAsset(mTextureDic[key]);
             mTextureDic[key] = null;
             mTextureDic.Remove(key);
@@ -96,6 +109,47 @@ public class ResourceManager
         }
 
         return false;
+    }
+
+    void LoadSprite(string path, Texture2D texture)
+    {
+        if (mSpriteDic.ContainsKey(texture))
+            return;
+
+        Sprite[] sprites = Resources.LoadAll<Sprite>(path);
+        if (sprites == null || sprites.Length <= 0)
+            return;
+
+        mSpriteDic.Add(texture, new Dictionary<string, Sprite>());
+        for (int i = 0; i < sprites.Length; ++i)
+        {
+            mSpriteDic[texture].Add(sprites[i].name, sprites[i]);
+        }
+    }
+
+    void UnloadSprite(Texture2D texture)
+    {
+        if (mSpriteDic.ContainsKey(texture) == false)
+            return;
+
+        var e = mSpriteDic[texture].GetEnumerator();
+        while(e.MoveNext())
+        {
+            mSpriteDic[texture][e.Current.Key] = null;
+        }
+        mSpriteDic[texture].Clear();
+        mSpriteDic.Remove(texture);
+    }
+
+    public Sprite GetSprite(Texture2D texture, string name)
+    {
+        if (mSpriteDic.ContainsKey(texture) == false)
+            return null;
+
+        if (mSpriteDic[texture].ContainsKey(name) == false)
+            return null;
+
+        return mSpriteDic[texture][name];
     }
 
     private string _WhereString;

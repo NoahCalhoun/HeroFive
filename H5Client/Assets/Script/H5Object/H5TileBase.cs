@@ -180,7 +180,7 @@ public class H5TileBase : H5ObjectBase
                     return;
             }
 
-            m_TileUV.Set(sizeX, sizeY, offsetIndexX, offsetIndexY);
+            m_TileUV.Set(sizeX, sizeY, sizeX * offsetIndexX, sizeY * offsetIndexY);
             TileRendererMaterial.SetVector("_UVPos", m_TileUV);
             TileRendererMaterial.SetColor("_CutoffColor", new Color32(0, 0, 255, 255));
         }

@@ -20,9 +20,43 @@ public enum Episode
 
 public static class ResourceHelper
 {
-    public static Sprite GetSprite(this Texture2D texture, string name)
+    public static SpriteData GetSpriteData(this Texture2D texture, string name)
     {
-        return ResourceManager.Instance.GetSprite(texture, name);
+        return ResourceManager.Instance.GetSpriteData(texture, name);
+    }
+}
+
+public class SpriteData
+{
+    private Vector2 TextureSize;
+    private Vector2 SpriteSize;
+    private Vector2 SpriteOffset;
+    private Vector2 SpritePivot;
+
+    public Vector4 UV { get; private set; }
+    public Color Cutoff { get; private set; }
+    public Vector4 UVSprite { get; private set; }
+    public Vector4 ShaderSetUV { get; private set; }
+    public Vector4 ShaderTestUV { get; private set; }
+
+    public SpriteData(Sprite sprite, float meshPixel = 200f, float pivotX = 0.5f, float pivotY = 0.5f)
+    {
+        if (sprite == null)
+            return;
+
+        TextureSize = new Vector2(sprite.texture.width, sprite.texture.height);
+        SpriteSize = new Vector2(sprite.rect.xMax - sprite.rect.xMin, sprite.rect.yMax - sprite.rect.yMin);
+        SpriteOffset = new Vector2(sprite.rect.xMin, sprite.rect.yMin);
+        SpritePivot = new Vector2(sprite.pivot.x, sprite.pivot.y);
+
+        UV = new Vector4(SpriteSize.x / TextureSize.x, SpriteSize.y / TextureSize.y, SpriteOffset.x / TextureSize.x, SpriteOffset.y / TextureSize.y);
+        Cutoff = sprite.texture.GetPixel(0, 0);
+        UVSprite = new Vector4(meshPixel / SpriteSize.x, meshPixel / SpriteSize.y
+            , (pivotX - SpritePivot.x / meshPixel) * meshPixel / TextureSize.x
+            , (pivotY - SpritePivot.y / meshPixel) * meshPixel / TextureSize.y);
+
+        ShaderSetUV = new Vector4(UV.x * UVSprite.x, UV.y * UVSprite.y, UV.z - UVSprite.z, UV.w - UVSprite.w);
+        ShaderTestUV = new Vector4(UV.z, UV.x + UV.z, UV.w, UV.y + UV.w);
     }
 }
 
@@ -32,7 +66,7 @@ public class ResourceManager
     public static ResourceManager Instance { get { if (mInstance == null) mInstance = new ResourceManager(); return mInstance; } }
 
     private Dictionary<string, Texture2D> mTextureDic = new Dictionary<string, Texture2D>();
-    private Dictionary<Texture2D, Dictionary<string, Sprite>> mSpriteDic = new Dictionary<Texture2D, Dictionary<string, Sprite>>();
+    private Dictionary<Texture2D, Dictionary<string, SpriteData>> mSpriteDic = new Dictionary<Texture2D, Dictionary<string, SpriteData>>();
 
     StringBuilder sb = new StringBuilder();
 
@@ -66,7 +100,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
-            LoadSprite(sb.ToString(), texture);
+            LoadSpriteData(sb.ToString(), texture);
             return texture;
         }
 
@@ -75,7 +109,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
-            LoadSprite(sb.ToString(), texture);
+            LoadSpriteData(sb.ToString(), texture);
             return texture;
         }
 
@@ -84,7 +118,7 @@ public class ResourceManager
         if (texture != null)
         {
             mTextureDic.Add(key, texture);
-            LoadSprite(sb.ToString(), texture);
+            LoadSpriteData(sb.ToString(), texture);
             return texture;
         }
 
@@ -101,7 +135,7 @@ public class ResourceManager
 
         if (mTextureDic.ContainsKey(key))
         {
-            UnloadSprite(mTextureDic[key]);
+            UnloadSpriteData(mTextureDic[key]);
             Resources.UnloadAsset(mTextureDic[key]);
             mTextureDic[key] = null;
             mTextureDic.Remove(key);
@@ -111,7 +145,7 @@ public class ResourceManager
         return false;
     }
 
-    void LoadSprite(string path, Texture2D texture)
+    void LoadSpriteData(string path, Texture2D texture)
     {
         if (mSpriteDic.ContainsKey(texture))
             return;
@@ -120,28 +154,33 @@ public class ResourceManager
         if (sprites == null || sprites.Length <= 0)
             return;
 
-        mSpriteDic.Add(texture, new Dictionary<string, Sprite>());
+        //var spriteTexture = sprites[0].texture;
+        mSpriteDic.Add(texture, new Dictionary<string, SpriteData>());
         for (int i = 0; i < sprites.Length; ++i)
         {
-            mSpriteDic[texture].Add(sprites[i].name, sprites[i]);
+            mSpriteDic[texture].Add(sprites[i].name, new SpriteData(sprites[i]));
+            //Resources.UnloadAsset(sprites[i]);
+            //sprites[i] = null;
         }
+        //Resources.UnloadAsset(spriteTexture);
+        //spriteTexture = null;
     }
 
-    void UnloadSprite(Texture2D texture)
+    void UnloadSpriteData(Texture2D texture)
     {
-        if (mSpriteDic.ContainsKey(texture) == false)
+        if (mSpriteDic.ContainsKey(texture) == false || mSpriteDic[texture].Count <= 0)
             return;
 
         var e = mSpriteDic[texture].GetEnumerator();
-        while(e.MoveNext())
-        {
-            mSpriteDic[texture][e.Current.Key] = null;
-        }
+        //while(e.MoveNext())
+        //{
+        //    mSpriteDic[texture][e.Current.Key] = null;
+        //}
         mSpriteDic[texture].Clear();
         mSpriteDic.Remove(texture);
     }
 
-    public Sprite GetSprite(Texture2D texture, string name)
+    public SpriteData GetSpriteData(Texture2D texture, string name)
     {
         if (mSpriteDic.ContainsKey(texture) == false)
             return null;

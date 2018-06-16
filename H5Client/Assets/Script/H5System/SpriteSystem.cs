@@ -11,7 +11,7 @@ public enum ActionState
     Faint
 }
 
-public class SpriteData
+public class SpriteSet
 {
     public Texture2D Texture;
     public List<KeyValuePair<Sprite, Sprite>> Sprites;
@@ -21,5 +21,5 @@ public class SpriteSystem : H5SystemBase
 {
     public ActionState State { get; private set; }
 
-    private Dictionary<ActionState, SpriteData> mSpriteDic = new Dictionary<ActionState, SpriteData>(EnumComparer<ActionState>.Instance);
+    private Dictionary<ActionState, SpriteSet> mSpriteDic = new Dictionary<ActionState, SpriteSet>(EnumComparer<ActionState>.Instance);
 }

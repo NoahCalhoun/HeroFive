@@ -1,12 +1,11 @@
-﻿Shader "H5/TileRenderer"
+﻿Shader "H5/Sprite"
 {
 	Properties
 	{
 		_MainTex("Texture", 2D) = "" {}
-	_Cutoff("Alpha cutoff", Range(0,1)) = 0.9
-		_UVStartPos("UV Value", VECTOR) = (0, 0, 0, 0)
-		_Neighbor("Neighbor", Int) = 0
 		_CutoffColor("Cutoff Color", Color) = (1, 1, 1, 1)
+		_SetUV("Set UV", VECTOR) = (0, 0, 0, 0)
+		_TestUV("Test UV", VECTOR) = (1, 1, 1, 1)
 	}
 
 		SubShader
@@ -43,10 +42,9 @@
 
 	sampler2D _MainTex;
 	float4 _MainTex_ST;
-	float _Cutoff;
-	VECTOR _UVPos;
-	int _Neighbor;
 	fixed4 _CutoffColor;
+	VECTOR _SetUV;
+	VECTOR _TestUV;
 
 	v2f vert(appdata v)
 	{
@@ -59,33 +57,18 @@
 
 	fixed4 frag(v2f i) : SV_Target
 	{
-		float2 originuv = i.uv;
-		i.uv *= fixed2(_UVPos.x, _UVPos.y);
-		i.uv += fixed2(_UVPos.z, _UVPos.w);
+		i.uv *= fixed2(_SetUV.x, _SetUV.y);
+		i.uv += fixed2(_SetUV.z, _SetUV.w);
+
+		if (i.uv.x < _TestUV.x || i.uv.x > _TestUV.y || i.uv.y < _TestUV.z || i.uv.y > _TestUV.w)
+			discard;
 
 		fixed4 col = tex2D(_MainTex, i.uv)/* * i.color*/;
 
-		//if (col.a < _Cutoff
-		//	 || (abs(col.r - _CutoffColor.r) < 0.01
-		//		 && abs(col.g - _CutoffColor.g) < 0.01
-		//		 && abs(col.b - _CutoffColor.b) < 0.01))
 		if (abs(col.r - _CutoffColor.r) < 0.01
 			&& abs(col.g - _CutoffColor.g) < 0.01
 			&& abs(col.b - _CutoffColor.b) < 0.01)
 			discard;
-
-		//if (_Neighbor & 32)
-		//{
-		//	float alphaValue = 0.2;
-
-		//	if (_Neighbor & 2 && originuv.y >= 0.9
-		//		|| _Neighbor & 4 && originuv.y <= 0.1
-		//		|| _Neighbor & 8 && originuv.x <= 0.1
-		//		|| _Neighbor & 16 && originuv.x >= 0.9)
-		//		alphaValue = 0.5;
-
-		//	col = col * (1 - alphaValue) + fixed4(1, 0, 0, 1) * alphaValue;
-		//}
 
 		return col;
 	}

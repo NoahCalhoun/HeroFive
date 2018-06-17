@@ -96,6 +96,7 @@ public class MovementSystem : H5SystemBase
     public void SetKnockBack(H5Direction dir, byte count)
     {
         if (m_State != null) m_State.SetState(MoveState.KnockBack);
+        Owner.Direction = dir.Reverse();
         CurTargetTile = MoveManager.Instance.FindStraight(WorldManager.Instance.GetTile(m_TM), dir, count);
     }
 
@@ -218,7 +219,7 @@ public class MovementSystem : H5SystemBase
 
         float KnockBackSpeed = (CurTargetTile.TM.position - m_TM.position).magnitude * 7.0f;
 
-        Owner.Direction = MoveToTarget(Mathf.Clamp(KnockBackSpeed, 1, 100)).Reverse();
+        MoveToTarget(Mathf.Clamp(KnockBackSpeed, 1, 100));
 
         return false;
     }

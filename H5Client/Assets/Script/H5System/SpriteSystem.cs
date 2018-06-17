@@ -89,7 +89,8 @@ public class SpriteSystem : H5SystemBase
         if (mSpriteDic.ContainsKey(State) == false)
             return;
 
-        var spriteName = Owner.Direction.IsFront() ? mSpriteDic[State].Advance(deltaTime).Key : mSpriteDic[State].Advance(Time.deltaTime).Value;
+        var data = mSpriteDic[State].Advance(deltaTime);
+        var spriteName = Owner.Direction.IsFront() ? data.Key : data.Value;
         
         var sprite = mSpriteDic[State].Texture.GetSpriteData(spriteName);
         OwnerRenderer.material.SetTexture("_MainTex", mSpriteDic[State].Texture);

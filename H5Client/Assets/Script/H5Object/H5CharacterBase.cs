@@ -17,8 +17,10 @@ public enum CharacterType
 public class H5CharacterBase : H5ObjectBase
 {
     public CharacterType Type { get; protected set; }
+    public H5Direction Direction;
 
     MovementSystem m_MovementSystem;
+    public SpriteSystem SpriteSystem { get; private set; }
 
     public override void InitObject()
     {
@@ -27,39 +29,111 @@ public class H5CharacterBase : H5ObjectBase
     public void InitCharacter(CharacterType type)
     {
         Type = type;
+        Direction = H5Direction.Right;
 
         m_MovementSystem = new MovementSystem();
         m_MovementSystem.InitSystem(this);
 
+        SpriteSystem = new SpriteSystem();
+        SpriteSystem.InitSystem(this);
+
         var loadMaterial = Resources.Load("Material/Character") as Material;
         var renderer = GetComponentInChildren<MeshRenderer>();
         renderer.material = loadMaterial;
+        renderer.gameObject.transform.localScale = new Vector3(4, 4, 1);
+        renderer.gameObject.transform.localRotation = WorldManager.Instance.CameraRoot.rotation;
 
-        switch(Type)
+        float idleTerm = 0.2f;
+        switch (Type)
         {
             case CharacterType.Tanker:
-                renderer.material.color = new Color32(0, 0, 255, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_01a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+                    break;
+                }
 
             case CharacterType.Dealer:
-                renderer.material.color = new Color32(255, 0, 255, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_03a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+                    break;
+                }
 
             case CharacterType.Positioner:
-                renderer.material.color = new Color32(128, 128, 128, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_04a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+                    break;
+                }
 
             case CharacterType.Supporter:
-                renderer.material.color = new Color32(0, 255, 0, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_02a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+                    break;
+                }
 
             case CharacterType.Monarch:
-                renderer.material.color = new Color32(255, 255, 0, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_00a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle03")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle04")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle05")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle04")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+
+                    spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_00b");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(0.1f, new KeyValuePair<string, string>("Move00", "Move04")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(0.1f, new KeyValuePair<string, string>("Move01", "Move05")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(0.1f, new KeyValuePair<string, string>("Move02", "Move06")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(0.1f, new KeyValuePair<string, string>("Move03", "Move07")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Move, spriteData);
+
+                    spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_00a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Hit00", "Hit01")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Hit, spriteData);
+                    break;
+                }
 
             case CharacterType.Monster:
-                renderer.material.color = new Color32(255, 0, 0, 255);
-                break;
+                {
+                    var spriteData = new SpriteSet();
+                    spriteData.Texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_00a");
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle03")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle04")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle05")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle04")));
+                    spriteData.CalcTotalTime();
+                    SpriteSystem.AddSet(ActionState.Idle, spriteData);
+                    break;
+                }
         }
 
         var bannerPrefab = Resources.Load("Prefab/Widget/Banner") as GameObject;
@@ -67,6 +141,8 @@ public class H5CharacterBase : H5ObjectBase
         banner.GetComponent<H5WidgetBanner>().InitBanner(this);
         banner.transform.SetParent(UIManager.Instance.UICameraRoot);
         banner.transform.localScale = Vector3.one;
+
+        SpriteSystem.UpdateSystem(0);
     }
 
     // Use this for initialization
@@ -79,6 +155,9 @@ public class H5CharacterBase : H5ObjectBase
     void Update()
     {
         if (m_MovementSystem != null) m_MovementSystem.Update();
+
+        if (SpriteSystem != null)
+            SpriteSystem.UpdateSystem(Time.deltaTime);
     }
 
     public void MoveTo(byte _x, byte _y)
@@ -86,7 +165,7 @@ public class H5CharacterBase : H5ObjectBase
         m_MovementSystem.SetWalk(_x, _y);
     }
 
-    public void KnockBackTo(TILE_DIR dir, byte count)
+    public void KnockBackTo(H5Direction dir, byte count)
     {
         m_MovementSystem.SetKnockBack(dir, count);
     }

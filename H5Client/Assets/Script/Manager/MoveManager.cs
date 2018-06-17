@@ -33,14 +33,14 @@ public class MoveManager
     HashSet<ushort> CloseSet = new HashSet<ushort>();
     SortedDictionary<long, List<AStarNode>> SortedDic = new SortedDictionary<long, List<AStarNode>>();
 
-    public H5TileBase FindStraight(H5TileBase _start, TILE_DIR _dir, byte _count)
+    public H5TileBase FindStraight(H5TileBase _start, H5Direction _dir, byte _count)
     {
         H5TileBase result = null;
         H5TileBase neighbor = _start;
 
         for (byte i = 0; i < _count; ++i)
         {
-            neighbor = neighbor.GetNeighbor((TILE_NEIGHBOR)_dir);
+            neighbor = neighbor.GetNeighbor(_dir);
 
             if (neighbor == null || !neighbor.IsWalkable ) break;
 
@@ -64,9 +64,9 @@ public class MoveManager
         {
             CloseSet.Add(CurNode.This.m_Coordinate.xy);
 
-            foreach (TILE_NEIGHBOR direction in System.Enum.GetValues(typeof(TILE_NEIGHBOR)))
+            foreach (H5Direction direction in System.Enum.GetValues(typeof(H5Direction)))
             {
-                if (direction == TILE_NEIGHBOR.Max) break;
+                if (direction == H5Direction.Max) break;
                 AddOpenDic(CurNode, direction, _target);
             }
 
@@ -99,7 +99,7 @@ public class MoveManager
         return new List<H5TileBase>(PathList);
     }
     
-    void AddOpenDic(AStarNode _node, TILE_NEIGHBOR _direction, H5TileBase _target)
+    void AddOpenDic(AStarNode _node, H5Direction _direction, H5TileBase _target)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
         if (NeighborTile == null || !NeighborTile.IsWalkable) return;

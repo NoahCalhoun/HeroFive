@@ -6,6 +6,7 @@
 		_CutoffColor("Cutoff Color", Color) = (1, 1, 1, 1)
 		_SetUV("Set UV", VECTOR) = (0, 0, 0, 0)
 		_TestUV("Test UV", VECTOR) = (1, 1, 1, 1)
+		_Mirror("Mirror", Int) = 0
 	}
 
 		SubShader
@@ -45,6 +46,7 @@
 	fixed4 _CutoffColor;
 	VECTOR _SetUV;
 	VECTOR _TestUV;
+	bool _Mirror;
 
 	v2f vert(appdata v)
 	{
@@ -57,6 +59,9 @@
 
 	fixed4 frag(v2f i) : SV_Target
 	{
+		if (_Mirror & 1)
+			i.uv.x = 1 - i.uv.x;
+
 		i.uv *= fixed2(_SetUV.x, _SetUV.y);
 		i.uv += fixed2(_SetUV.z, _SetUV.w);
 

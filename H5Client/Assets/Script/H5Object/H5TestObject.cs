@@ -12,7 +12,7 @@ public class H5TestObject : H5ObjectBase
         //loadMaterial.SetTexture("_MainTex", ResourceManager.Instance.LoadImage("Test", "Texture/TestImage"));
         GetComponent<MeshRenderer>().material = loadMaterial;
 
-        TM.localScale = new Vector3(2, 2, 1);
+        TM.localScale = new Vector3(4, 4, 1);
 
         var texture = ResourceManager.Instance.LoadTexture(Episode.FT2, "char_00a");
         var sprite = texture.GetSpriteData("Idle00");

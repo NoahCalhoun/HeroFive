@@ -38,7 +38,7 @@ public class MovementSystem : H5SystemBase
         {
             State = state;
             Step = step;
-            NextState = MoveState.None;
+            NextState = MoveState.Stand;
         }
 
         public void SetNextState(MoveState state)
@@ -76,17 +76,24 @@ public class MovementSystem : H5SystemBase
     {
         base.InitSystem(owner);
         m_TM = owner.TM;
-        m_Speed = 10.1f;
+        m_Speed = 8f;
         m_State = new MoveStateMachine();
     }
 
     public void SetWalk(byte _x, byte _y)
     {
-        if (m_State != null) m_State.SetState(MoveState.Walk);
+        if (m_State != null)
+        {
+            if (m_State.State == MoveState.KnockBack)
+                return;
+
+            m_State.SetState(MoveState.Walk);
+        }
+
         CalcMovePath(LogicHelper.GetCoordinateFromXY(_x, _y));
     }
 
-    public void SetKnockBack(TILE_DIR dir, byte count)
+    public void SetKnockBack(H5Direction dir, byte count)
     {
         if (m_State != null) m_State.SetState(MoveState.KnockBack);
         CurTargetTile = MoveManager.Instance.FindStraight(WorldManager.Instance.GetTile(m_TM), dir, count);
@@ -120,15 +127,26 @@ public class MovementSystem : H5SystemBase
         switch (m_State.Step)
         {
             case MoveStep.On:
-                m_State.NextStep();
+                if (OnStateStand()) m_State.NextStep();
                 break;
             case MoveStep.In:
-                m_State.NextStep();
+                if (InStateStand()) m_State.NextStep();
                 break;
             case MoveStep.End:
                 m_State.NextStep();
                 break;
         }
+    }
+
+    private bool OnStateStand()
+    {
+        Owner.SpriteSystem.State = ActionState.Idle;
+        return true;
+    }
+
+    private bool InStateStand()
+    {
+        return false;
     }
 
     private void ProcessStateWalk()
@@ -151,6 +169,7 @@ public class MovementSystem : H5SystemBase
 
     private bool OnStateWalk()
     {
+        Owner.SpriteSystem.State = ActionState.Move;
         return true;
     }
 
@@ -164,7 +183,7 @@ public class MovementSystem : H5SystemBase
             Path.RemoveAt(0);
         }
 
-        MoveToTarget(m_Speed);
+        Owner.Direction = MoveToTarget(m_Speed);
 
         return false;
     }
@@ -189,6 +208,7 @@ public class MovementSystem : H5SystemBase
 
     private bool OnStateKnockBack()
     {
+        Owner.SpriteSystem.State = ActionState.Hit;
         return true;
     }
 
@@ -198,7 +218,7 @@ public class MovementSystem : H5SystemBase
 
         float KnockBackSpeed = (CurTargetTile.TM.position - m_TM.position).magnitude * 7.0f;
 
-        MoveToTarget(Mathf.Clamp(KnockBackSpeed, 1, 100));
+        Owner.Direction = MoveToTarget(Mathf.Clamp(KnockBackSpeed, 1, 100)).Reverse();
 
         return false;
     }
@@ -210,18 +230,19 @@ public class MovementSystem : H5SystemBase
         Path = MoveManager.Instance.FindPath(Start, WorldManager.Instance.GetTile(_xy));
     }
 
-    private void MoveToTarget(float speed)
+    private H5Direction MoveToTarget(float speed)
     {
         Vector3 Dir = CurTargetTile.TM.position - m_TM.position;
         Dir.y = 0;
         Vector3 Move = Dir.normalized * speed * Time.deltaTime;
 
-        if (Move.magnitude >= Dir.magnitude)
+        if (Move.sqrMagnitude >= Dir.sqrMagnitude)
         {
             Move = Dir;
             CurTargetTile = null;
         }
 
         m_TM.Translate(Move);
+        return Move.VectorToDirection();
     }
 }

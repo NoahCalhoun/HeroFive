@@ -10,6 +10,15 @@ public enum OBJECT_TYPE
     OBJECT_TILE
 }
 
+public enum H5Direction
+{
+    Up,     //+Y
+    Down,   //-Y
+    Left,   //-X
+    Right,  //+X
+    Max
+}
+
 public class WorldManager : MonoBehaviour
 {
     private static WorldManager mInstance;
@@ -18,6 +27,7 @@ public class WorldManager : MonoBehaviour
     private Transform WorldRoot;
     public Transform TileRoot;
     public Transform CharacterRoot;
+    public Transform CameraRoot;
 
     private Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
 
@@ -34,7 +44,6 @@ public class WorldManager : MonoBehaviour
     void Start()
     {
         WorldRoot = GameObject.FindGameObjectWithTag("World").transform;
-
         StartCoroutine(TestInit());
     }
 
@@ -58,7 +67,7 @@ public class WorldManager : MonoBehaviour
 
         h5Test.TM.SetParent(WorldRoot);
         h5Test.InitObject();
-        h5Test.PlaceOnWorld(x, z);
+        h5Test.PlaceOnTilePosition(x, z);
 
         return h5Test;
     }
@@ -209,7 +218,8 @@ public class WorldManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             IsMousePicked = true;
-            test.KnockBackTo(TILE_DIR.Up, 5);
+            int i = Random.Range(0, 4);
+            test.KnockBackTo((H5Direction)i, 5);
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -242,23 +252,23 @@ public class WorldManager : MonoBehaviour
             var curx = LogicHelper.GetXFromCoordinate(coord);
             var cury = LogicHelper.GetYFromCoordinate(coord);
 
-            for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
+            for (H5Direction i = 0; i < H5Direction.Max; ++i)
             {
                 var neighborx = curx;
                 var neighbory = cury;
 
                 switch (i)
                 {
-                    case TILE_NEIGHBOR.Up:
+                    case H5Direction.Up:
                         neighbory += 1;
                         break;
-                    case TILE_NEIGHBOR.Down:
+                    case H5Direction.Down:
                         neighbory -= 1;
                         break;
-                    case TILE_NEIGHBOR.Left:
+                    case H5Direction.Left:
                         neighborx -= 1;
                         break;
-                    case TILE_NEIGHBOR.Right:
+                    case H5Direction.Right:
                         neighborx += 1;
                         break;
                     default:
@@ -280,7 +290,7 @@ public class WorldManager : MonoBehaviour
         while (e.MoveNext())
         {
             var curCoord = e.Current;
-            for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
+            for (H5Direction i = 0; i < H5Direction.Max; ++i)
             {
                 var checkCoord = e.Current.GetNeighborCoordinate(i);
                 if (bound.Contains(checkCoord) == false)

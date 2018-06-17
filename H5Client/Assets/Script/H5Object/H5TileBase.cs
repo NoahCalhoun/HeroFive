@@ -10,24 +10,6 @@ public enum TILE_TYPE
     TILE_TYPE_WATER,
 }
 
-public enum TILE_DIR
-{
-    Up,
-    Down,
-    Left,
-    Right,
-    Max
-}
-
-public enum TILE_NEIGHBOR
-{
-    Up,
-    Down,
-    Left,
-    Right,
-    Max
-}
-
 [StructLayout(LayoutKind.Explicit)]
 public struct Coordinate
 {
@@ -62,8 +44,8 @@ public class H5TileBase : H5ObjectBase
     public static readonly float TileSize = 1f;
     public static readonly ushort InvalidCoordinate = ushort.MaxValue;
 
-    private H5TileBase[] m_Neighbors = new H5TileBase[(int)TILE_NEIGHBOR.Max];
-    public H5TileBase GetNeighbor(TILE_NEIGHBOR _direction) { return m_Neighbors[(int)_direction]; }
+    private H5TileBase[] m_Neighbors = new H5TileBase[(int)H5Direction.Max];
+    public H5TileBase GetNeighbor(H5Direction _direction) { return m_Neighbors[(int)_direction]; }
     private Material TileRendererMaterial;
     private Material TileMaterial;
 
@@ -186,10 +168,10 @@ public class H5TileBase : H5ObjectBase
         }
     }
 
-    public void SetNeighbor(TILE_NEIGHBOR type, H5TileBase tile)
+    public void SetNeighbor(H5Direction type, H5TileBase tile)
     {
         var typeInt = (int)type;
-        if (typeInt < 0 || typeInt >= (int)TILE_NEIGHBOR.Max)
+        if (typeInt < 0 || typeInt >= (int)H5Direction.Max)
             return;
 
         m_Neighbors[typeInt] = (tile != null && tile.IsWalkable) ? tile : null;
@@ -210,9 +192,9 @@ public class H5TileBase : H5ObjectBase
         SettingFlag = -1;
     }
 
-    public void SetFlag(TILE_NEIGHBOR neighbor)
+    public void SetFlag(H5Direction neighbor)
     {
-        if (neighbor == TILE_NEIGHBOR.Max)
+        if (neighbor == H5Direction.Max)
             return;
 
         var flag = 1 << ((int)neighbor + 1);
@@ -244,7 +226,7 @@ public class H5TileBase : H5ObjectBase
         if (tiles.Contains(Coordinate) == false)
             tiles.Add(Coordinate);
 
-        for (TILE_NEIGHBOR i = 0; i < TILE_NEIGHBOR.Max; ++i)
+        for (H5Direction i = 0; i < H5Direction.Max; ++i)
         {
             var neighbor = m_Neighbors[(int)i];
             if (neighbor != null)

@@ -10,6 +10,18 @@ public static class LogicHelper
         obj.TM.position = new Vector3(x, 0, z);
     }
 
+    public static void PlaceOnTile(this H5ObjectBase obj, H5TileBase tile)
+    {
+        obj.TM.position = new Vector3(tile.m_Coordinate.x, 0, tile.m_Coordinate.y);
+        obj.TM.rotation = WorldManager.Instance.CameraRoot.rotation;
+    }
+
+    public static void PlaceOnTilePosition(this H5ObjectBase obj, float x, float z)
+    {
+        obj.TM.position = new Vector3(x, 0, z);
+        obj.TM.rotation = WorldManager.Instance.CameraRoot.rotation;
+    }
+
     public static ushort GetCoordinateFromXY(byte x, byte y)
     {
         return (ushort)((x << 8) | y);
@@ -31,17 +43,17 @@ public static class LogicHelper
         return (byte)(coordinate & byte.MaxValue);
     }
 
-    public static ushort GetNeighborCoordinate(this ushort host, TILE_NEIGHBOR type)
+    public static ushort GetNeighborCoordinate(this ushort host, H5Direction type)
     {
         switch(type)
         {
-            case TILE_NEIGHBOR.Up:
+            case H5Direction.Up:
                 return host.GetUpCoordinate();
-            case TILE_NEIGHBOR.Down:
+            case H5Direction.Down:
                 return host.GetDownCoordinate();
-            case TILE_NEIGHBOR.Left:
+            case H5Direction.Left:
                 return host.GetLeftCoordinate();
-            case TILE_NEIGHBOR.Right:
+            case H5Direction.Right:
                 return host.GetRightCoordinate();
             default:
                 return ushort.MaxValue;
@@ -100,5 +112,57 @@ public static class LogicHelper
     public static void Clear(this StringBuilder sb)
     {
         sb.Length = 0;
+    }
+
+    public static bool IsFront(this H5Direction dir)
+    {
+        return dir == H5Direction.Up || dir == H5Direction.Right;
+    }
+
+    public static bool IsMirror(this H5Direction dir)
+    {
+        return dir == H5Direction.Up || dir == H5Direction.Down;
+    }
+
+    public static H5Direction VectorToDirection(this Vector3 dir)
+    {
+        float[] factor = new float[(int)H5Direction.Max];
+        factor[(int)H5Direction.Up] = Vector3.Dot(dir, Vector3.forward);
+        factor[(int)H5Direction.Down] = Vector3.Dot(dir, -Vector3.forward);
+        factor[(int)H5Direction.Left] = Vector3.Dot(dir, -Vector3.right);
+        factor[(int)H5Direction.Right] = Vector3.Dot(dir, Vector3.right);
+
+        int maxIdx = -1;
+        float maxfloat = 0;
+        for (int i = 0; i < (int)H5Direction.Max; ++i)
+        {
+            if (maxfloat < factor[i])
+            {
+                maxIdx = i;
+                maxfloat = factor[i];
+            }
+        }
+
+        return maxIdx == -1 ? H5Direction.Max : (H5Direction)maxIdx;
+    }
+
+    public static H5Direction Reverse(this H5Direction dir)
+    {
+        switch (dir)
+        {
+            case H5Direction.Up:
+                return H5Direction.Down;
+
+            case H5Direction.Down:
+                return H5Direction.Up;
+
+            case H5Direction.Right:
+                return H5Direction.Left;
+
+            case H5Direction.Left:
+                return H5Direction.Right;
+        }
+
+        return H5Direction.Max;
     }
 }

@@ -13,7 +13,7 @@
 	{
 		Tags{ "Queue" = "AlphaTest" "RenderType" = "TransparentCutout" "IgnoreProjector" = "true" }
 		//Tags{ "RenderType" = "Opaque" }
-		ZWrite On
+		ZWrite Off
 		//Blend SrcAlpha OneMinusSrcAlpha
 		//AlphaTest Greater[_Cutoff]
 		//ColorMaterial AmbientAndDiffuse

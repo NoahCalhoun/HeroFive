@@ -53,6 +53,7 @@ public class H5CharacterBase : H5ObjectBase
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.CalcTotalTime();
                     SpriteSystem.AddSet(ActionState.Idle, spriteData);
                     break;
@@ -65,6 +66,7 @@ public class H5CharacterBase : H5ObjectBase
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.CalcTotalTime();
                     SpriteSystem.AddSet(ActionState.Idle, spriteData);
                     break;
@@ -77,6 +79,7 @@ public class H5CharacterBase : H5ObjectBase
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.CalcTotalTime();
                     SpriteSystem.AddSet(ActionState.Idle, spriteData);
                     break;
@@ -89,6 +92,7 @@ public class H5CharacterBase : H5ObjectBase
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle00", "Idle00")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle02", "Idle02")));
+                    spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(idleTerm, new KeyValuePair<string, string>("Idle01", "Idle01")));
                     spriteData.CalcTotalTime();
                     SpriteSystem.AddSet(ActionState.Idle, spriteData);
                     break;

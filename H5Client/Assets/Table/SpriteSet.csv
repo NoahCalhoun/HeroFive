@@ -1,0 +1,3 @@
+int,string,bool,string,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string
+ID,NAME,LOOP,EP,TEXTURE,TIME_0,SPRITE_0,TIME_1,SPRITE_1,TIME_2,SPRITE_2,TIME_3,SPRITE_3,TIME_4,SPRITE_4,TIME_5,SPRITE_5,TIME_6,SPRITE_6,TIME_7,SPRITE_7,TIME_8,SPRITE_8,TIME_9,SPRITE_9
+1,KARIN_IDLE,TRUE,FT2,char_00a,200,IDLE01,200,IDLE02,200,IDLE03,200,IDLE02,0,0,0,0,0,0,0,0,0,0,0,0

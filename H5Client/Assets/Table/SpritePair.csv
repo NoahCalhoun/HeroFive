@@ -1,0 +1,6 @@
+int,string,string,string
+ID,NAME,SPRITE1,SPRITE2
+1,IDLE01,Idle00,Idle01
+2,IDLE02,Idle02,Idle03
+3,IDLE03,Idle04,Idle05
+4,IDLE04,Idle06,Idle07

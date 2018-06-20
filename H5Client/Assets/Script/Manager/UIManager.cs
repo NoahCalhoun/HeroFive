@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     {
         foreach (UIWindowType type in System.Enum.GetValues(typeof(UIWindowType)))
         {
-            if (type == UIWindowType.None)
+            if (type == UIWindowType.None || mWindowDic.ContainsKey(type))
                 continue;
 
             var name = type.ToString();

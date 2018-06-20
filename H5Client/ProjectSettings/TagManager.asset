@@ -8,6 +8,7 @@ TagManager:
   - TileRoot
   - UICamera
   - UI
+  - Game
   layers:
   - Default
   - TransparentFX

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public partial class H5Table
 {
@@ -34,19 +35,31 @@ public partial class H5Table
         {
             CharacterTableData data;
 
-                data = new CharacterTableData()
-                {
-                    ID = 1,
-                    NAME = "KARIN",
-                    HP = 10,
-                    ATK = 10,
-                    SPD = 10,
-                    LCM = 10,
-                    EDR = 10,
-                    SPRITE = "KARIN",
-                };
-                mIDDic.Add(1, data);
-                mNameDic.Add("KARIN", data);
+            TextAsset asset = Resources.Load<TextAsset>("Table/Character");
+            var strs = asset.text;
+            strs = strs.Replace("\r", "");
+            var lines = strs.Split('\n');
+            List<string[]> tableStr = new List<string[]>();
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                if (lines[i].Length <= 0)
+                    continue;
+                tableStr.Add(lines[i].Split(','));
+            }
+            for (int i = 2; i < tableStr.Count; ++i)
+            {
+                data = new CharacterTableData();
+                data.ID = int.Parse(tableStr[i][0]);
+                data.NAME = tableStr[i][1];
+                data.HP = int.Parse(tableStr[i][2]);
+                data.ATK = int.Parse(tableStr[i][3]);
+                data.SPD = int.Parse(tableStr[i][4]);
+                data.LCM = int.Parse(tableStr[i][5]);
+                data.EDR = int.Parse(tableStr[i][6]);
+                data.SPRITE = tableStr[i][7];
+                mIDDic.Add(data.ID, data);
+                mNameDic.Add(data.NAME, data);
+            }
         }
 
         public CharacterTableData GetDataByID(int id)

@@ -28,19 +28,140 @@ public class TableGenerator : MonoBehaviour
 
     }
 
-    public static void GenerateTable(object sender, FileSystemEventArgs e)
+
+
+    public enum IndexerType
     {
-        var tableNames = Directory.GetFiles("Assets/Table", "*.csv");
+        None,
+        Ten,
+        Hundred
+    }
+
+    public static void GenerateTable()
+    {
+        var tableNames = Directory.GetFiles("Assets/Resources/Table", "*.csv");
+
         for (int i = 0; i < tableNames.Length; ++i)
         {
             var table = tableNames[i];
-            table = table.Replace("Assets/Table\\", "");
+            table = table.Replace("Assets/Resources/Table\\", "");
             table = table.Replace(".csv", "");
             CreateTable(tableNames[i], "Assets/Script/H5Table/" + table + "Table.cs", table);
         }
     }
 
-    public static void CreateTable(string database, string output, string function)
+    private static Dictionary<string, KeyValuePair<IndexerType, string>> FieldSet = new Dictionary<string, KeyValuePair<IndexerType, string>>();    //자료명, 인덱서타입, 자료형
+    private static Dictionary<string, int> FieldAmount = new Dictionary<string, int>();                                                            //자료명, 총인덱스수
+    private static List<KeyValuePair<string, int>> FieldGroup = new List<KeyValuePair<string, int>>();                                              //자료명, 인덱스
+
+    private static bool ArrangeTableData(List<string[]> inStr)
+    {
+        FieldSet.Clear();
+        FieldAmount.Clear();
+        FieldGroup.Clear();
+        
+        if (inStr.Count < 2 || inStr[0].Length < 2)
+            return false;
+
+        for (int i = 0; i < inStr[1].Length; ++i)
+        {
+            var testStr = inStr[1][i];
+            var type = IndexerType.None;
+            if (testStr.EndsWith("_0"))
+            {
+                type = IndexerType.Ten;
+                testStr = testStr.Substring(0, testStr.Length - 1);
+                FieldSet.Add(testStr, new KeyValuePair<IndexerType, string>(type, inStr[0][i]));
+                FieldAmount.Add(testStr, 1);
+                FieldGroup.Add(new KeyValuePair<string, int>(testStr, FieldAmount[testStr] - 1));
+                continue;
+            }
+            else if (testStr.EndsWith("_00"))
+            {
+                type = IndexerType.Hundred;
+                testStr = testStr.Substring(0, testStr.Length - 2);
+                FieldSet.Add(testStr, new KeyValuePair<IndexerType, string>(type, inStr[0][i]));
+                FieldAmount.Add(testStr, 1);
+                FieldGroup.Add(new KeyValuePair<string, int>(testStr, FieldAmount[testStr] - 1));
+                continue;
+            }
+
+            bool isIndexer = false;
+            var e = FieldSet.GetEnumerator();
+            while (e.MoveNext())
+            {
+                if (testStr.StartsWith(e.Current.Key))
+                {
+                    switch (e.Current.Value.Key)
+                    {
+                        case IndexerType.Ten:
+                            {
+                                int num = 0;
+                                if (int.TryParse(testStr.Substring(testStr.Length - 1), out num))
+                                {
+                                    var idxTestStr = testStr.Substring(0, testStr.Length - 1);
+                                    if (FieldAmount.ContainsKey(idxTestStr) && num == FieldAmount[idxTestStr])
+                                    {
+                                        FieldAmount[testStr.Substring(0, testStr.Length - 1)] += 1;
+                                        FieldGroup.Add(new KeyValuePair<string, int>(idxTestStr, FieldAmount[idxTestStr] - 1));
+                                        isIndexer = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+
+                        case IndexerType.Hundred:
+                            {
+                                int num = 0;
+                                if (int.TryParse(testStr.Substring(testStr.Length - 2), out num))
+                                {
+                                    var idxTestStr = testStr.Substring(0, testStr.Length - 2);
+                                    if (FieldAmount.ContainsKey(idxTestStr) && num == FieldAmount[idxTestStr])
+                                    {
+                                        FieldAmount[testStr.Substring(0, testStr.Length - 2)] += 1;
+                                        FieldGroup.Add(new KeyValuePair<string, int>(idxTestStr, FieldAmount[idxTestStr] - 1));
+                                        isIndexer = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+
+                        default:
+                            continue;
+                    }
+
+                    if (isIndexer == true)
+                        break;
+                }
+            }
+
+            if (isIndexer == false)
+            {
+                FieldSet.Add(testStr, new KeyValuePair<IndexerType, string>(type, inStr[0][i]));
+                FieldAmount.Add(testStr, 1);
+                FieldGroup.Add(new KeyValuePair<string, int>(testStr, FieldAmount[testStr] - 1));
+            }
+        }
+
+        return true;
+    }
+
+
+
+    public static bool ArrangeTableData(List<string[]> inStr, out Dictionary<string, KeyValuePair<IndexerType, string>> set, out Dictionary<string, int> amount, out List<KeyValuePair<string, int>> group)
+    {
+        bool succeed = ArrangeTableData(inStr);
+
+        set = succeed ? FieldSet : null;
+        amount = succeed ? FieldAmount : null;
+        group = succeed ? FieldGroup : null;
+        return succeed;
+
+    }
+
+    private static void CreateTable(string database, string output, string function)
     {
         List<string[]> tableStr = new List<string[]>();
 
@@ -53,18 +174,23 @@ public class TableGenerator : MonoBehaviour
                 while ((strLineValue = sr.ReadLine()) != null)
                 {
                     tableStr.Add(strLineValue.Split(','));
-                    continue;
                 }
             }
         }
 
-        var tableName = function + "Table";
-        var tableData = tableName + "Data";
+        if (ArrangeTableData(tableStr) == false)
+            return;
+
         if (Directory.GetFiles("Assets/Script/H5Table/", function + "Table.cs").Length > 0)
             File.Delete(output);
+
+        var tableName = function + "Table";
+        var tableData = tableName + "Data";
+
         using (StreamWriter sw = new StreamWriter(output, false))
         {
             sw.WriteLine("using System.Collections.Generic;");
+            sw.WriteLine("using UnityEngine;");
             sw.WriteLine("");
             sw.WriteLine("public partial class H5Table");
             sw.WriteLine("{");
@@ -83,9 +209,17 @@ public class TableGenerator : MonoBehaviour
             sw.WriteLine("    {");
             sw.WriteLine("        public class " + tableData);
             sw.WriteLine("        {");
-            for (int i = 0; i < tableStr[0].Length; ++i)
+            var ea = FieldAmount.GetEnumerator();
+            while (ea.MoveNext())
             {
-                sw.WriteLine("            public " + tableStr[0][i] + " " + tableStr[1][i] + ";");
+                if (FieldSet[ea.Current.Key].Key == IndexerType.None)
+                {
+                    sw.WriteLine("            public " + FieldSet[ea.Current.Key].Value + " " + ea.Current.Key + ";");
+                }
+                else
+                {
+                    sw.WriteLine("            public " + FieldSet[ea.Current.Key].Value + "[] " + ea.Current.Key + " = new " + FieldSet[ea.Current.Key].Value + "[" + ea.Current.Value + "];");
+                }
             }
             sw.WriteLine("        }");
             sw.WriteLine("");
@@ -96,138 +230,85 @@ public class TableGenerator : MonoBehaviour
             sw.WriteLine("        {");
             sw.WriteLine("            " + tableData + " data;");
             sw.WriteLine("");
-            for (int i = 2; i < tableStr.Count; ++i)
+            sw.WriteLine("            TextAsset asset = Resources.Load<TextAsset>(\"Table/" + function + "\");");
+            sw.WriteLine("            var strs = asset.text;");
+            sw.WriteLine("            strs = strs.Replace(\"\\r\", \"\");");
+            sw.WriteLine("            var lines = strs.Split('\\n');");
+            sw.WriteLine("            List<string[]> tableStr = new List<string[]>();");
+            sw.WriteLine("            for (int i = 0; i < lines.Length; ++i)");
+            sw.WriteLine("            {");
+            sw.WriteLine("                if (lines[i].Length <= 0)");
+            sw.WriteLine("                    continue;");
+            sw.WriteLine("                tableStr.Add(lines[i].Split(','));");
+            sw.WriteLine("            }");
+            sw.WriteLine("            for (int i = 2; i < tableStr.Count; ++i)");
+            sw.WriteLine("            {");
+            sw.WriteLine("                data = new " + tableData + "();");
+            for (int i = 0; i < FieldGroup.Count; ++i)
             {
-                sw.WriteLine("                data = new " + tableData + "()");
-                sw.WriteLine("                {");
-                for (int j = 0; j < tableStr[0].Length; ++j)
+                var eg = FieldGroup[i];
+                if (FieldSet[eg.Key].Key == IndexerType.None)
                 {
-                    switch (tableStr[0][j])
+                    switch (FieldSet[eg.Key].Value)
                     {
-                        case "string":
-                            sw.WriteLine("                    " + tableStr[1][j] + " = " + '\"' + tableStr[i][j] + '\"' + ",");
-                            break;
+                        case "int":
+                            {
+                                sw.WriteLine("                data." + eg.Key + " = " + "int.Parse(tableStr[i][" + i + "]);");
+                                break;
+                            }
 
                         case "bool":
-                            sw.WriteLine("                    " + tableStr[1][j] + " = " + (tableStr[i][j] == "TRUE" ? "true" : "false") + ",");
-                            break;
+                            {
+                                sw.WriteLine("                data." + eg.Key + " = " + "(tableStr[i][" + i + "] == \"TRUE\" ? true : false);");
+                                break;
+                            }
 
                         default:
-                            sw.WriteLine("                    " + tableStr[1][j] + " = " +  tableStr[i][j] + ",");
-                            break;
+                            {
+                                sw.WriteLine("                data." + eg.Key + " = " + "tableStr[i][" + i + "];");
+                                break;
+                            }
                     }
                 }
-                sw.WriteLine("                };");
-                sw.WriteLine("                mIDDic.Add(" + tableStr[2][0] + ", data);");
-                sw.WriteLine("                mNameDic.Add(" + (tableStr[0][1] == "string" ? ('\"' + tableStr[2][1] + '\"') : tableStr[2][1]) + ", data);");
+                else
+                {
+                    switch (FieldSet[eg.Key].Value)
+                    {
+                        case "int":
+                            {
+                                sw.WriteLine("                data." + eg.Key + "[" + eg.Value + "] = " + "int.Parse(tableStr[i][" + i + "]);");
+                                break;
+                            }
+
+                        case "bool":
+                            {
+                                sw.WriteLine("                data." + eg.Key + "[" + eg.Value + "] = " + "(tableStr[i][" + i + "] == \"TRUE\" ? true : false);");
+                                break;
+                            }
+
+                        default:
+                            {
+                                sw.WriteLine("                data." + eg.Key + "[" + eg.Value + "] = " + "tableStr[i][" + i + "];");
+                                break;
+                            }
+                    }
+                }
             }
+            sw.WriteLine("                mIDDic.Add(data." + FieldGroup[0].Key + ", data);");
+            sw.WriteLine("                mNameDic.Add(data." + FieldGroup[1].Key + ", data);");
+            sw.WriteLine("            }");
             sw.WriteLine("        }");
             sw.WriteLine("");
-            sw.WriteLine("        public " + tableData + " GetDataBy" + tableStr[1][0] + "(" + tableStr[0][0] + " id)");
+            sw.WriteLine("        public " + tableData + " GetDataBy" + FieldGroup[0].Key + "(" + FieldSet[FieldGroup[0].Key].Value + " id)");
             sw.WriteLine("        {");
             sw.WriteLine("            return mIDDic.ContainsKey(id) ? mIDDic[id] : null;");
             sw.WriteLine("        }");
-            sw.WriteLine("        public " + tableData + " GetDataBy" + tableStr[1][1] + "(" + tableStr[0][1] + " name)");
+            sw.WriteLine("        public " + tableData + " GetDataBy" + FieldGroup[1].Key + "(" + FieldSet[FieldGroup[1].Key].Value + " name)");
             sw.WriteLine("        {");
             sw.WriteLine("            return mNameDic.ContainsKey(name) ? mNameDic[name] : null;");
             sw.WriteLine("        }");
             sw.WriteLine("    }");
             sw.WriteLine("}");
-        }
-    }
-    public static void CreateTableWithoutLine(string database, string output, string function)
-    {
-        List<string[]> tableStr = new List<string[]>();
-
-        using (FileStream fs = new FileStream(database, FileMode.Open))
-        {
-            using (StreamReader sr = new StreamReader(fs, Encoding.UTF8, false))
-            {
-                string strLineValue = null;
-
-                while ((strLineValue = sr.ReadLine()) != null)
-                {
-                    tableStr.Add(strLineValue.Split(','));
-                    continue;
-                }
-            }
-        }
-
-        var tableName = function + "Table";
-        var tableData = tableName + "Data";
-        if (Directory.GetFiles("Assets/Script/H5Table/", function + "Table.cs").Length > 0)
-            File.Delete(output);
-        using (StreamWriter sw = new StreamWriter(output, false))
-        {
-            sw.Write("using System.Collections.Generic;");
-            sw.WriteLine("");
-            sw.Write("public partial class H5Table");
-            sw.Write("{");
-            sw.Write("    private static " + tableName + " m" + function + ";");
-            sw.Write("    public static " + tableName + " " + function);
-            sw.Write("    {");
-            sw.Write("        get");
-            sw.Write("        {");
-            sw.Write("            if (m" + function + " == null)");
-            sw.Write("                m" + function + " = new " + tableName + "();");
-            sw.Write("            return m" + function + ";");
-            sw.Write("        }");
-            sw.Write("    }");
-            sw.WriteLine("");
-            sw.Write("    public class " + tableName);
-            sw.Write("    {");
-            sw.Write("        public class " + tableData);
-            sw.Write("        {");
-            for (int i = 0; i < tableStr[0].Length; ++i)
-            {
-                sw.Write("            public " + tableStr[0][i] + " " + tableStr[1][i] + ";");
-            }
-            sw.Write("        }");
-            sw.WriteLine("");
-            sw.Write("        private Dictionary<" + tableStr[0][0] + ", " + tableData + "> mIDDic = new Dictionary<" + tableStr[0][0] + ", " + tableData + ">();");
-            sw.Write("        private Dictionary<" + tableStr[0][1] + ", " + tableData + "> mNameDic = new Dictionary<" + tableStr[0][1] + ", " + tableData + ">();");
-            sw.WriteLine("");
-            sw.Write("        public " + tableName + "()");
-            sw.Write("        {");
-            sw.Write("            " + tableData + " data;");
-            sw.WriteLine("");
-            for (int i = 2; i < tableStr.Count; ++i)
-            {
-                sw.Write("                data = new " + tableData + "()");
-                sw.Write("                {");
-                for (int j = 0; j < tableStr[0].Length; ++j)
-                {
-                    switch (tableStr[0][j])
-                    {
-                        case "string":
-                            sw.Write("                    " + tableStr[1][j] + " = " + '\"' + tableStr[i][j] + '\"' + ",");
-                            break;
-
-                        case "bool":
-                            sw.Write("                    " + tableStr[1][j] + " = " + (tableStr[i][j] == "TRUE" ? "true" : "false") + ",");
-                            break;
-
-                        default:
-                            sw.Write("                    " + tableStr[1][j] + " = " + tableStr[i][j] + ",");
-                            break;
-                    }
-                }
-                sw.Write("                };");
-                sw.Write("                mIDDic.Add(" + tableStr[2][0] + ", data);");
-                sw.Write("                mNameDic.Add(" + (tableStr[0][1] == "string" ? ('\"' + tableStr[2][1] + '\"') : tableStr[2][1]) + ", data);");
-            }
-            sw.Write("        }");
-            sw.WriteLine("");
-            sw.Write("        public " + tableData + " GetDataBy" + tableStr[1][0] + "(" + tableStr[0][0] + " id)");
-            sw.Write("        {");
-            sw.Write("            return mIDDic.ContainsKey(id) ? mIDDic[id] : null;");
-            sw.Write("        }");
-            sw.Write("        public " + tableData + " GetDataBy" + tableStr[1][1] + "(" + tableStr[0][1] + " name)");
-            sw.Write("        {");
-            sw.Write("            return mNameDic.ContainsKey(name) ? mNameDic[name] : null;");
-            sw.Write("        }");
-            sw.Write("    }");
-            sw.Write("}");
         }
     }
 }

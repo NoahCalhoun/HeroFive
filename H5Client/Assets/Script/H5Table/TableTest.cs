@@ -43,6 +43,15 @@ public partial class H5Table
                 mIDDic.Add(1, data);
                 mNameDic.Add("aa", data);
             }
+
+            TextAsset asset = Resources.Load<TextAsset>("Table/Test");
+            var strs = asset.text;
+            var lines = strs.Split('\n');
+            List<string[]> tableStr = new List<string[]>();
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                tableStr.Add(lines[i].Split(','));
+            }
         }
 
         public TestTableData GetDataByID(int id)

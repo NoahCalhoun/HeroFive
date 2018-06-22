@@ -3,33 +3,24 @@ using System.Text;
 using System.IO;
 
 using UnityEngine;
+using UnityEditor;
+
+[CustomEditor(typeof(TableGenerator))]
+public class TableGeneratorEditor : Editor
+{
+    TILE_TYPE CurrentTileType = TILE_TYPE.TILE_TYPE_NONE;
+
+    public override void OnInspectorGUI()
+    {
+        //DrawDefaultInspector();
+        if (GUILayout.Button("Generate Tables"))
+            TableGenerator.GenerateTable();
+    }
+}
 
 [ExecuteInEditMode]
 public class TableGenerator : MonoBehaviour
 {
-#if false//UNITY_EDITOR
-    FileSystemWatcher fsw = new FileSystemWatcher();
-#endif
-
-    // Use this for initialization
-    void Start()
-    {
-#if false//UNITY_EDITOR
-        fsw.Path = "Assets/Table";
-        fsw.NotifyFilter = NotifyFilters.LastWrite;
-
-        fsw.Changed += new FileSystemEventHandler(GenerateTable);
-#endif
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
-
     public enum IndexerType
     {
         None,
@@ -39,6 +30,12 @@ public class TableGenerator : MonoBehaviour
 
     public static void GenerateTable()
     {
+        var deleteNames = Directory.GetFiles("Assets/Script/H5Table", "*.cs");
+        for (int i = 0; i < deleteNames.Length; ++i)
+        {
+            File.Delete(deleteNames[i]);
+        }
+
         var tableNames = Directory.GetFiles("Assets/Resources/Table", "*.csv");
 
         for (int i = 0; i < tableNames.Length; ++i)

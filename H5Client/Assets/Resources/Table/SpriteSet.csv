@@ -1,3 +1,5 @@
-int,string,bool,string,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string,int,string
-ID,NAME,LOOP,EP,TEXTURE,TIME_0,SPRITE_0,TIME_1,SPRITE_1,TIME_2,SPRITE_2,TIME_3,SPRITE_3,TIME_4,SPRITE_4,TIME_5,SPRITE_5,TIME_6,SPRITE_6,TIME_7,SPRITE_7,TIME_8,SPRITE_8,TIME_9,SPRITE_9
-1,KARIN_IDLE,TRUE,FT2,char_00a,200,IDLE01,200,IDLE02,200,IDLE03,200,IDLE02,0,0,0,0,0,0,0,0,0,0,0,0
+int,string,bool,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string,int,string,string
+ID,NAME,LOOP,EP,TEXTURE,TIME_0,SPRITE_L_0,SPRITE_R_0,TIME_1,SPRITE_L_1,SPRITE_R_1,TIME_2,SPRITE_L_2,SPRITE_R_2,TIME_3,SPRITE_L_3,SPRITE_R_3,TIME_4,SPRITE_L_4,SPRITE_R_4,TIME_5,SPRITE_L_5,SPRITE_R_5,TIME_6,SPRITE_L_6,SPRITE_R_6,TIME_7,SPRITE_L_7,SPRITE_R_7,TIME_8,SPRITE_L_8,SPRITE_R_8,TIME_9,SPRITE_L_9,SPRITE_R_9
+1,KARIN_IDLE,TRUE,FT2,char_00a,200,Idle00,Idle03,200,Idle01,Idle04,200,Idle02,Idle05,200,Idle01,Idle04,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,KARIN_MOVE,TRUE,FT2,char_00b,100,Move00,Move04,100,Move01,Move05,100,Move02,Move06,100,Move03,Move07,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,KARIN_HIT,TRUE,FT2,char_00a,200,Hit00,Hit01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

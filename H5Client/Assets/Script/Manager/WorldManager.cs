@@ -91,6 +91,32 @@ public class WorldManager : MonoBehaviour
         return h5Tile;
     }
 
+    public H5CharacterBase SpawnCharacter(byte x, byte y, int tableId)
+    {
+        var characterObjPrefab = Resources.Load("Prefab/Character") as GameObject;
+        var characterObj = GameObject.Instantiate(characterObjPrefab);
+
+        if (characterObj == null)
+            return null;
+
+        var coord = LogicHelper.GetCoordinateFromXY(x, y);
+        var h5Character = characterObj.AddComponent<H5CharacterBase>();
+        h5Character.TM.SetParent(CharacterRoot);
+        h5Character.InitCharacter(tableId);
+
+        var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
+        if (spawnTile != null)
+        {
+            h5Character.TM.position = spawnTile.TM.position;
+        }
+        else
+        {
+            h5Character.TM.position = new Vector3(0, 0, 0);
+        }
+
+        return h5Character;
+    }
+
     public H5CharacterBase SpawnCharacter(byte x, byte y, CharacterType type)
     {
         var characterObjPrefab = Resources.Load("Prefab/Character") as GameObject;
@@ -325,12 +351,12 @@ public class WorldManager : MonoBehaviour
 
         FocusCameraOnTile(5, 5, true);
 
-        test = SpawnCharacter(1, 1, CharacterType.Monarch);
-        SpawnCharacter(0, 3, CharacterType.Tanker);
-        SpawnCharacter(3, 0, CharacterType.Dealer);
-        SpawnCharacter(3, 2, CharacterType.Positioner);
-        SpawnCharacter(2, 3, CharacterType.Supporter);
-        SpawnCharacter(6, 7, CharacterType.Monster);
+        test = SpawnCharacter(1, 1, 1);
+        SpawnCharacter(0, 3, 1);
+        SpawnCharacter(3, 0, 1);
+        SpawnCharacter(3, 2, 1);
+        SpawnCharacter(2, 3, 1);
+        SpawnCharacter(6, 7, 1);
 
         yield break;
     }

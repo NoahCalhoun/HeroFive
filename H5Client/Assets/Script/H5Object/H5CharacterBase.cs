@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -19,11 +20,68 @@ public class H5CharacterBase : H5ObjectBase
     public CharacterType Type { get; protected set; }
     public H5Direction Direction;
 
-    MovementSystem m_MovementSystem;
+    public MovementSystem MovementSystem { get; private set; }
     public SpriteSystem SpriteSystem { get; private set; }
+    public StatSystem StatSystem { get; private set; }
 
     public override void InitObject()
     {
+    }
+
+    public void InitCharacter(int tableId)
+    {
+        var charData = H5Table.Character.GetDataByID(tableId);
+
+        if (charData == null)
+            return;
+
+        Type = CharacterType.Monarch;
+        Direction = H5Direction.Right;
+
+        MovementSystem = new MovementSystem();
+        MovementSystem.InitSystem(this);
+
+        SpriteSystem = new SpriteSystem();
+        SpriteSystem.InitSystem(this);
+
+        StatSystem = new StatSystem();
+        StatSystem.InitSystem(this);
+
+        var loadMaterial = Resources.Load("Material/Character") as Material;
+        var renderer = GetComponentInChildren<MeshRenderer>();
+        renderer.material = loadMaterial;
+        renderer.gameObject.transform.localScale = new Vector3(4, 4, 1);
+        renderer.gameObject.transform.localRotation = WorldManager.Instance.CameraRoot.rotation;
+
+        StatSystem.HP = charData.HP;
+        StatSystem.ATK = charData.ATK;
+        StatSystem.SPD = charData.SPD;
+        StatSystem.LCM = charData.LCM;
+        StatSystem.EDR = charData.EDR;
+
+        SpriteSet spriteData;
+        var spriteTableData = H5Table.Sprite.GetDataByNAME(charData.SPRITE);
+        for (int i = 0; i < spriteTableData.ACTION_.Length; ++i)
+        {
+            if (spriteTableData.ACTION_[i] == "0")
+                break;
+
+            var spriteSetData = H5Table.SpriteSet.GetDataByNAME(spriteTableData.SPRITE_SET_[i]);
+
+            spriteData = new SpriteSet();
+            spriteData.Texture = ResourceManager.Instance.LoadTexture((Episode)(Enum.Parse(typeof(Episode), spriteSetData.EP)), spriteSetData.TEXTURE);
+            for (int j = 0; j < spriteSetData.SPRITE_L_.Length; ++j)
+            {
+                if (spriteSetData.SPRITE_L_[j] == "0")
+                    break;
+
+                spriteData.SpriteName.Add(new KeyValuePair<float, KeyValuePair<string, string>>(
+                    spriteSetData.TIME_[j] * 0.001f, new KeyValuePair<string, string>(spriteSetData.SPRITE_L_[j], spriteSetData.SPRITE_R_[j])));
+            }
+            spriteData.CalcTotalTime();
+            SpriteSystem.AddSet((ActionState)(Enum.Parse(typeof(ActionState), spriteTableData.ACTION_[i])), spriteData);
+        }
+        SpriteSystem.UpdateSystem(0);
     }
 
     public void InitCharacter(CharacterType type)
@@ -31,8 +89,8 @@ public class H5CharacterBase : H5ObjectBase
         Type = type;
         Direction = H5Direction.Right;
 
-        m_MovementSystem = new MovementSystem();
-        m_MovementSystem.InitSystem(this);
+        MovementSystem = new MovementSystem();
+        MovementSystem.InitSystem(this);
 
         SpriteSystem = new SpriteSystem();
         SpriteSystem.InitSystem(this);
@@ -158,7 +216,7 @@ public class H5CharacterBase : H5ObjectBase
     // Update is called once per frame
     void Update()
     {
-        if (m_MovementSystem != null) m_MovementSystem.Update();
+        if (MovementSystem != null) MovementSystem.Update();
 
         if (SpriteSystem != null)
             SpriteSystem.UpdateSystem(Time.deltaTime);
@@ -166,11 +224,11 @@ public class H5CharacterBase : H5ObjectBase
 
     public void MoveTo(byte _x, byte _y)
     {
-        m_MovementSystem.SetWalk(_x, _y);
+        MovementSystem.SetWalk(_x, _y);
     }
 
     public void KnockBackTo(H5Direction dir, byte count)
     {
-        m_MovementSystem.SetKnockBack(dir, count);
+        MovementSystem.SetKnockBack(dir, count);
     }
 }

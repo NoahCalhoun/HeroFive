@@ -1,3 +1,3 @@
 int,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string
 ID,NAME,ACTION_0,SPRITE_SET_0,ACTION_1,SPRITE_SET_1,ACTION_2,SPRITE_SET_2,ACTION_3,SPRITE_SET_3,ACTION_4,SPRITE_SET_4,ACTION_5,SPRITE_SET_5,ACTION_6,SPRITE_SET_6,ACTION_7,SPRITE_SET_7,ACTION_8,SPRITE_SET_8,ACTION_9,SPRITE_SET_9
-1,KARIN,Idle,KARIN_IDLE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+1,KARIN,Idle,KARIN_IDLE,Move,KARIN_MOVE,Hit,KARIN_HIT,0,0,0,0,0,0,0,0,0,0,0,0,0,0

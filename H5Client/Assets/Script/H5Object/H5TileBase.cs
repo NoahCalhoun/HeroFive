@@ -53,9 +53,24 @@ public class H5TileBase : H5ObjectBase
     private int NeighborFlag;
     private int SettingFlag;
 
+    H5ObjectBase ObjectOnTile;
+
     public Coordinate m_Coordinate { get; private set; }
 
-    public bool IsWalkable { get { return m_TileType == TILE_TYPE.TILE_TYPE_NORMAL; } }
+    // 인자로 H5Character를 넣어서 해당 캐릭터가 이동할 수 있는지에 대한 판단을 하는건 어떨까
+    // ex) 물 타일의 경우 비행 유닛은 이동 가능, 지상 타입은 이동 불가
+    public bool IsWalkable()
+    {
+        if (ObjectOnTile != null ) return false;
+
+        switch (m_TileType)
+        {
+            case TILE_TYPE.TILE_TYPE_WATER:
+                return false;
+        }
+
+        return true;
+    }
 
     public TILE_TYPE m_TileType;
     public override void InitObject()
@@ -174,7 +189,7 @@ public class H5TileBase : H5ObjectBase
         if (typeInt < 0 || typeInt >= (int)H5Direction.Max)
             return;
 
-        m_Neighbors[typeInt] = (tile != null && tile.IsWalkable) ? tile : null;
+        m_Neighbors[typeInt] = (tile != null && tile.IsWalkable()) ? tile : null;
     }
 
     public void SetPicked(bool picked)
@@ -241,5 +256,32 @@ public class H5TileBase : H5ObjectBase
     public void Refresh()
     {
         InitTile(m_TileType, Coordinate);
+    }
+
+    public bool OnTile(H5ObjectBase obj)
+    {
+        if (obj == null || ObjectOnTile != null) return false;
+
+        ObjectOnTile = obj;
+
+        return true;
+    }
+
+    public bool OnTile(H5CharacterBase objChar)
+    {
+        if (objChar == null || !OnTile((H5ObjectBase)objChar)) return false;
+
+        objChar.OwnTile = this;
+
+        return true;
+    }
+
+    public bool LeaveTile(H5ObjectBase obj)
+    {
+        if (ObjectOnTile != obj) return false;
+
+        ObjectOnTile = null;
+
+        return true;
     }
 }

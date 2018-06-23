@@ -105,14 +105,9 @@ public class WorldManager : MonoBehaviour
         h5Character.InitCharacter(tableId);
 
         var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
-        if (spawnTile != null)
-        {
-            h5Character.TM.position = spawnTile.TM.position;
-        }
-        else
-        {
-            h5Character.TM.position = new Vector3(0, 0, 0);
-        }
+        if (spawnTile == null || !spawnTile.OnTile(h5Character)) return null;
+
+        h5Character.TM.position = spawnTile.TM.position;
 
         return h5Character;
     }
@@ -217,7 +212,8 @@ public class WorldManager : MonoBehaviour
                         byte by = LogicHelper.GetYFromCoordinate(e.Current.Key);
                         FocusCameraOnTile(bx, by);
 
-                        if (e.Current.Value.IsWalkable == false)
+                        // 요기 오또케 처리해야하나욘
+                        if (e.Current.Value.m_TileType != TILE_TYPE.TILE_TYPE_NORMAL)
                             return;
 
                         var bound = e.Current.Value.GetBound(2);

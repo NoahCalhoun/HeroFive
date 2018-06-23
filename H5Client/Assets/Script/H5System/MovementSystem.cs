@@ -80,24 +80,61 @@ public class MovementSystem : H5SystemBase
         m_State = new MoveStateMachine();
     }
 
-    public void SetWalk(byte _x, byte _y)
+    // Walk set
+    public bool SetWalk(byte _x, byte _y)
     {
-        if (m_State != null)
-        {
-            if (m_State.State == MoveState.KnockBack)
-                return;
+        if (m_State == null || !IsMovable_Walk()) return false;
 
-            m_State.SetState(MoveState.Walk);
-        }
+        if (!CalcMovePath(LogicHelper.GetCoordinateFromXY(_x, _y)))
+            return false;
 
-        CalcMovePath(LogicHelper.GetCoordinateFromXY(_x, _y));
+        if (Path.Count <= 0) return false;
+
+        if (!OwnerOnTileSwitchTo(Path[Path.Count - 1])) return false;
+
+        m_State.SetState(MoveState.Walk);
+        return true;
     }
 
-    public void SetKnockBack(H5Direction dir, byte count)
+    public bool IsMovable_Walk()
     {
-        if (m_State != null) m_State.SetState(MoveState.KnockBack);
-        Owner.Direction = dir.Reverse();
+        if (m_State == null) return false;
+
+        switch (m_State.State)
+        {
+            case MoveState.KnockBack:
+                return false;
+        }
+
+        return true;
+    }
+
+    // KnockBack set
+    public bool SetKnockBack(H5Direction dir, byte count)
+    {
+        if (m_State == null) return false;
+
         CurTargetTile = MoveManager.Instance.FindStraight(WorldManager.Instance.GetTile(m_TM), dir, count);
+        if (!OwnerOnTileSwitchTo(CurTargetTile)) return false;
+
+        m_State.SetState(MoveState.KnockBack);
+        Owner.Direction = dir.Reverse();
+        return true;
+    }
+
+    // 이동은 set 하는 순간 '순간이동' 처럼 목적지로 이동이 결정되고, update는 보여주는 과정일 뿐이다.
+    // 따라서 움직이기 전 타일을 놓아주고 이동 후 타일을 잡는다.
+    // Owner.OwnTile == null을 허용하지 않는 것은 Respawn 때 타일을 넣어주어 해결하자
+    private bool OwnerOnTileSwitchTo(H5TileBase tile)
+    {
+        if (Owner.OwnTile == null || tile == null) return false;
+
+        if (!Owner.OwnTile.LeaveTile(Owner)) return false;
+
+        if (!tile.OnTile(Owner)) return false;
+        Owner.OwnTile = tile;
+
+        return true;
     }
 
     public void Update()
@@ -224,11 +261,13 @@ public class MovementSystem : H5SystemBase
         return false;
     }
 
-    private void CalcMovePath(ushort _xy)
+    private bool CalcMovePath(ushort _xy)
     {
-        H5TileBase Start = CurTargetTile ?? WorldManager.Instance.GetTile(m_TM);
-
+        H5TileBase Start = CurTargetTile ?? Owner.OwnTile;
+        if (Start == null) return false;
+        
         Path = MoveManager.Instance.FindPath(Start, WorldManager.Instance.GetTile(_xy));
+        return true;
     }
 
     private H5Direction MoveToTarget(float speed)

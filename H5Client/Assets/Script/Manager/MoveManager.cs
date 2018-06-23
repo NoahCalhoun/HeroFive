@@ -42,7 +42,7 @@ public class MoveManager
         {
             neighbor = neighbor.GetNeighbor(_dir);
 
-            if (neighbor == null || !neighbor.IsWalkable ) break;
+            if (neighbor == null || !neighbor.IsWalkable() ) break;
 
             result = neighbor;
         }
@@ -102,7 +102,7 @@ public class MoveManager
     void AddOpenDic(AStarNode _node, H5Direction _direction, H5TileBase _target)
     {
         H5TileBase NeighborTile = _node.This.GetNeighbor(_direction);
-        if (NeighborTile == null || !NeighborTile.IsWalkable) return;
+        if (NeighborTile == null || !NeighborTile.IsWalkable()) return;
 
         ushort Coordinate = NeighborTile.m_Coordinate.xy;
         if (CloseSet.Contains(Coordinate)) return;

@@ -24,6 +24,8 @@ public class H5CharacterBase : H5ObjectBase
     public SpriteSystem SpriteSystem { get; private set; }
     public StatSystem StatSystem { get; private set; }
 
+    public H5TileBase OwnTile;
+
     public override void InitObject()
     {
     }

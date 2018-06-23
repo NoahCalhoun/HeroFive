@@ -222,6 +222,8 @@ public class TableGenerator : MonoBehaviour
             sw.WriteLine("");
             sw.WriteLine("        private Dictionary<" + tableStr[0][0] + ", " + tableData + "> mIDDic = new Dictionary<" + tableStr[0][0] + ", " + tableData + ">();");
             sw.WriteLine("        private Dictionary<" + tableStr[0][1] + ", " + tableData + "> mNameDic = new Dictionary<" + tableStr[0][1] + ", " + tableData + ">();");
+            sw.WriteLine("        private List<" + tableStr[0][0] + "> mIDs;");
+            sw.WriteLine("        private List<" + tableStr[0][1] + "> mNames;");
             sw.WriteLine("");
             sw.WriteLine("        public " + tableName + "()");
             sw.WriteLine("        {");
@@ -294,6 +296,8 @@ public class TableGenerator : MonoBehaviour
             sw.WriteLine("                mIDDic.Add(data." + FieldGroup[0].Key + ", data);");
             sw.WriteLine("                mNameDic.Add(data." + FieldGroup[1].Key + ", data);");
             sw.WriteLine("            }");
+            sw.WriteLine("            mIDs = new List<" + tableStr[0][0] + ">(mIDDic.Keys);");
+            sw.WriteLine("            mNames = new List<" + tableStr[0][1] + ">(mNameDic.Keys);");
             sw.WriteLine("        }");
             sw.WriteLine("");
             sw.WriteLine("        public " + tableData + " GetDataBy" + FieldGroup[0].Key + "(" + FieldSet[FieldGroup[0].Key].Value + " id)");
@@ -303,6 +307,14 @@ public class TableGenerator : MonoBehaviour
             sw.WriteLine("        public " + tableData + " GetDataBy" + FieldGroup[1].Key + "(" + FieldSet[FieldGroup[1].Key].Value + " name)");
             sw.WriteLine("        {");
             sw.WriteLine("            return mNameDic.ContainsKey(name) ? mNameDic[name] : null;");
+            sw.WriteLine("        }");
+            sw.WriteLine("        public List<" + tableStr[0][0] + "> Get" + FieldGroup[0].Key + "List()");
+            sw.WriteLine("        {");
+            sw.WriteLine("            return mIDs;");
+            sw.WriteLine("        }");
+            sw.WriteLine("        public List<" + tableStr[0][1] + "> Get" + FieldGroup[1].Key + "List()");
+            sw.WriteLine("        {");
+            sw.WriteLine("            return mNames;");
             sw.WriteLine("        }");
             sw.WriteLine("    }");
             sw.WriteLine("}");

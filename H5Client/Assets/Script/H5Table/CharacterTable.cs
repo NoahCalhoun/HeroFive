@@ -30,6 +30,8 @@ public partial class H5Table
 
         private Dictionary<int, CharacterTableData> mIDDic = new Dictionary<int, CharacterTableData>();
         private Dictionary<string, CharacterTableData> mNameDic = new Dictionary<string, CharacterTableData>();
+        private List<int> mIDs;
+        private List<string> mNames;
 
         public CharacterTable()
         {
@@ -60,6 +62,8 @@ public partial class H5Table
                 mIDDic.Add(data.ID, data);
                 mNameDic.Add(data.NAME, data);
             }
+            mIDs = new List<int>(mIDDic.Keys);
+            mNames = new List<string>(mNameDic.Keys);
         }
 
         public CharacterTableData GetDataByID(int id)
@@ -69,6 +73,14 @@ public partial class H5Table
         public CharacterTableData GetDataByNAME(string name)
         {
             return mNameDic.ContainsKey(name) ? mNameDic[name] : null;
+        }
+        public List<int> GetIDList()
+        {
+            return mIDs;
+        }
+        public List<string> GetNAMEList()
+        {
+            return mNames;
         }
     }
 }

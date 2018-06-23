@@ -1,0 +1,10 @@
+int,string,string,string
+ID,NAME,EP,TEXTURE
+1,LoadingScene1,FT2,ved01a
+2,LoadingScene2,FT2,ved01b
+3,LoadingScene3,FT2,ved01c
+4,LoadingScene4,FT2,ved01d
+5,LoadingScene5,FT2,ved01e
+6,LoadingScene6,FT2,ved01f
+7,LoadingScene7,FT2,ved01g
+8,LoadingScene8,FT2,ved01h

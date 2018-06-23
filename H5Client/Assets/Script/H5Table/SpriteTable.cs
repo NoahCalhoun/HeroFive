@@ -26,6 +26,8 @@ public partial class H5Table
 
         private Dictionary<int, SpriteTableData> mIDDic = new Dictionary<int, SpriteTableData>();
         private Dictionary<string, SpriteTableData> mNameDic = new Dictionary<string, SpriteTableData>();
+        private List<int> mIDs;
+        private List<string> mNames;
 
         public SpriteTable()
         {
@@ -70,6 +72,8 @@ public partial class H5Table
                 mIDDic.Add(data.ID, data);
                 mNameDic.Add(data.NAME, data);
             }
+            mIDs = new List<int>(mIDDic.Keys);
+            mNames = new List<string>(mNameDic.Keys);
         }
 
         public SpriteTableData GetDataByID(int id)
@@ -79,6 +83,14 @@ public partial class H5Table
         public SpriteTableData GetDataByNAME(string name)
         {
             return mNameDic.ContainsKey(name) ? mNameDic[name] : null;
+        }
+        public List<int> GetIDList()
+        {
+            return mIDs;
+        }
+        public List<string> GetNAMEList()
+        {
+            return mNames;
         }
     }
 }

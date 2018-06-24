@@ -53,7 +53,7 @@ public class H5TileBase : H5ObjectBase
     private int NeighborFlag;
     private int SettingFlag;
 
-    public H5ObjectBase ObjectOnTile { get; private set; }
+    public IMovable ObjectOnTile { get; private set; }
 
     public Coordinate m_Coordinate { get; private set; }
 
@@ -258,7 +258,7 @@ public class H5TileBase : H5ObjectBase
         InitTile(m_TileType, Coordinate);
     }
 
-    public bool OnTile(H5ObjectBase obj)
+    public bool OnTile(IMovable obj)
     {
         if (obj == null || ObjectOnTile != null) return false;
 
@@ -267,16 +267,7 @@ public class H5TileBase : H5ObjectBase
         return true;
     }
 
-    public bool OnTile(H5CharacterBase objChar)
-    {
-        if (objChar == null || !OnTile((H5ObjectBase)objChar)) return false;
-
-        objChar.OwnTile = this;
-
-        return true;
-    }
-
-    public bool LeaveTile(H5ObjectBase obj)
+    public bool LeaveTile(IMovable obj)
     {
         if (ObjectOnTile != obj) return false;
 

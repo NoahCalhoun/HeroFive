@@ -20,6 +20,7 @@ public class SkillData
     public byte Force;
 
     // 스킬 범위 (추가해야함
+    // 스킬 시전 범위 (추가해야함
 }
 
 public class SkillSystem : H5SystemBase
@@ -30,13 +31,24 @@ public class SkillSystem : H5SystemBase
         // 1. targetPos 기준에서 스킬의 범위 안에 있는 모든 타일을 가져온다.
         H5TileBase tile = WorldManager.Instance.GetTile(targetPos.xy);
         // 2. 타일 위에 있는 오브젝트를 가져온다
-        H5CharacterBase obj = (H5CharacterBase)tile.ObjectOnTile;
-        if (obj == null) return false;
+        IMovable obj = tile.ObjectOnTile;
         // 3. 해당 오브젝트를 움직인다.
-        switch(skillData.ForceType)
+        if (MoveBySkill(skillData, obj)) 
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool MoveBySkill(SkillData skillData, IMovable obj)
+    {
+        if (obj == null) return false;
+
+        switch (skillData.ForceType)
         {
             case ForceType.KnockBack: // 밀치기
-                obj.KnockBackTo(skillData.ForceDir, skillData.Force);
+                obj.KnockBack(skillData.ForceDir, skillData.Force);
                 break;
             case ForceType.Smack: // 날리기
                 break;

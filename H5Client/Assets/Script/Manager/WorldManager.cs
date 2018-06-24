@@ -108,6 +108,7 @@ public class WorldManager : MonoBehaviour
         if (spawnTile == null || !spawnTile.OnTile(h5Character)) return null;
 
         h5Character.TM.position = spawnTile.TM.position;
+        h5Character.OwnTile = spawnTile;
 
         return h5Character;
     }
@@ -230,7 +231,7 @@ public class WorldManager : MonoBehaviour
 
                         Path = MoveManager.Instance.FindPath(TileDic[(1 << 8) | 1], e.Current.Value);
 
-                        test.MoveTo(bx, by);
+                        test.Move(bx, by);
                         break;
                     }
                 }

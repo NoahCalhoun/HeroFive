@@ -15,7 +15,7 @@ public enum CharacterType
     Monster
 }
 
-public class H5CharacterBase : H5ObjectBase
+public class H5CharacterBase : H5ObjectBase, IMovable
 {
     public CharacterType Type { get; protected set; }
     public H5Direction Direction;
@@ -234,12 +234,12 @@ public class H5CharacterBase : H5ObjectBase
             SpriteSystem.UpdateSystem(Time.deltaTime);
     }
 
-    public void MoveTo(byte _x, byte _y)
+    public void Move(byte x, byte y)
     {
-        MovementSystem.SetWalk(_x, _y);
+        MovementSystem.SetWalk(x, y);
     }
 
-    public void KnockBackTo(H5Direction dir, byte count)
+    public void KnockBack(H5Direction dir, byte count)
     {
         MovementSystem.SetKnockBack(dir, count);
     }

@@ -73,6 +73,8 @@ public class H5CharacterBase : H5ObjectBase, IMovable
                 break;
 
             var spriteSetData = H5Table.SpriteSet.GetDataByNAME(spriteTableData.SPRITE_SET_[i]);
+            if (spriteSetData == null)
+                continue;
 
             spriteData = new SpriteSet();
             spriteData.Texture = ResourceManager.Instance.LoadTexture((Episode)(Enum.Parse(typeof(Episode), spriteSetData.EP)), spriteSetData.TEXTURE);

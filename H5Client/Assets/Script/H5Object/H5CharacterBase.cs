@@ -23,6 +23,7 @@ public class H5CharacterBase : H5ObjectBase
     public MovementSystem MovementSystem { get; private set; }
     public SpriteSystem SpriteSystem { get; private set; }
     public StatSystem StatSystem { get; private set; }
+    public SkillSystem SkillSystem { get; private set; }
 
     public H5TileBase OwnTile;
 
@@ -48,6 +49,9 @@ public class H5CharacterBase : H5ObjectBase
 
         StatSystem = new StatSystem();
         StatSystem.InitSystem(this);
+
+        SkillSystem = new SkillSystem();
+        SkillSystem.InitSystem(this);
 
         var loadMaterial = Resources.Load("Material/Character") as Material;
         var renderer = GetComponentInChildren<MeshRenderer>();
@@ -96,6 +100,12 @@ public class H5CharacterBase : H5ObjectBase
 
         SpriteSystem = new SpriteSystem();
         SpriteSystem.InitSystem(this);
+
+        StatSystem = new StatSystem();
+        StatSystem.InitSystem(this);
+
+        SkillSystem = new SkillSystem();
+        SkillSystem.InitSystem(this);
 
         var loadMaterial = Resources.Load("Material/Character") as Material;
         var renderer = GetComponentInChildren<MeshRenderer>();

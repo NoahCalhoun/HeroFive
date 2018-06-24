@@ -53,7 +53,7 @@ public class H5TileBase : H5ObjectBase
     private int NeighborFlag;
     private int SettingFlag;
 
-    H5ObjectBase ObjectOnTile;
+    public H5ObjectBase ObjectOnTile { get; private set; }
 
     public Coordinate m_Coordinate { get; private set; }
 

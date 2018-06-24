@@ -240,8 +240,19 @@ public class WorldManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             IsMousePicked = true;
-            int i = Random.Range(0, 4);
-            test.KnockBackTo((H5Direction)i, 5);
+
+            H5TileBase tile = GetTile_MousePick();
+            if (tile != null)
+            {
+                SkillData knockBack = new SkillData();
+                knockBack.ForceType = ForceType.KnockBack;
+                knockBack.ForceDir = (H5Direction)Random.Range(0, 4);
+                knockBack.Force = 5;
+
+                test.SkillSystem.DoSkillActive(knockBack, tile.m_Coordinate);
+            }
+            //int i = Random.Range(0, 4);
+            //test.KnockBackTo((H5Direction)i, 5);
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -393,5 +404,22 @@ public class WorldManager : MonoBehaviour
     public H5TileBase GetTile(Transform _tm)
     {
         return TileDic[LogicHelper.GetCoordinateFromXY((byte)_tm.position.x, (byte)_tm.position.z)];
+    }
+
+    public H5TileBase GetTile_MousePick()
+    {
+        RaycastHit hit;
+        if (LogicHelper.MousePickingOnWorld(out hit, 1 << 10) && hit.collider != null)
+        {
+            var e = TileDic.GetEnumerator();
+            while (e.MoveNext())
+            {
+                if (e.Current.Value.GO == hit.collider.gameObject)
+                    return e.Current.Value;
+
+            }
+        }
+
+        return null;
     }
 }

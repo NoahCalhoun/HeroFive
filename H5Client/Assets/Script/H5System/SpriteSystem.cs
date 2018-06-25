@@ -8,7 +8,7 @@ public enum ActionState
     Move,
     Skill,
     Hit,
-    Faint
+    Stun
 }
 
 public class SpriteSet

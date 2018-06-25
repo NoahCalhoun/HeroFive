@@ -5,6 +5,15 @@ TextureImporter:
     21300000: Idle00
     21300002: Idle01
     21300004: Idle02
+    21300006: Idle03
+    21300008: Idle04
+    21300010: Idle05
+    21300012: Hit00
+    21300014: Hit01
+    21300016: Stun00
+    21300018: Stun01
+    21300020: Drag00
+    21300022: Drag01
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -151,6 +160,186 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 031bedf248d945a419d6e84bea8f8a8c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Idle03
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 88
+        width: 52
+        height: 63
+      alignment: 9
+      pivot: {x: 0.4564611, y: 0.14063178}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7e4fe452c1dba3438a7aacebce818c2
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Idle04
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 89
+        width: 53
+        height: 59
+      alignment: 9
+      pivot: {x: 0.46582636, y: 0.12394249}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f615a17f868149e46b2f5e3d857d6ebe
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Idle05
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 90
+        width: 54
+        height: 58
+      alignment: 9
+      pivot: {x: 0.46645892, y: 0.10965163}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8a6c52557d53ce44aabc0f59477c48d
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hit00
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 150
+        width: 83
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5490991, y: 0.102925934}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5905236b165ba840b35615800cc9247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hit01
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 84
+        width: 78
+        height: 63
+      alignment: 9
+      pivot: {x: 0.4187274, y: 0.14063166}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74bea38be69b0e14d9011bae4bf0cdbe
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stun00
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 147
+        width: 48
+        height: 62
+      alignment: 9
+      pivot: {x: 0.49056688, y: 0.08371242}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbf7be34a26e07e45b7f8337c4be618f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stun01
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 88
+        width: 50
+        height: 59
+      alignment: 9
+      pivot: {x: 0.41849548, y: 0.12394236}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a94d885c4f9daa43b266bd2d43822c1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Drag00
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 150
+        width: 75
+        height: 66
+      alignment: 9
+      pivot: {x: 0.69923383, y: 0.12952377}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7cabe986a4e501d44a4a138e967d2e03
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Drag01
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 86
+        width: 70
+        height: 58
+      alignment: 9
+      pivot: {x: 0.40943953, y: 0.11745874}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70e63d6573c27e746a9521874e4673f5
       vertices: []
       indices: 
       edges: []

@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public enum TILE_TYPE
@@ -8,33 +7,6 @@ public enum TILE_TYPE
     TILE_TYPE_NONE,
     TILE_TYPE_NORMAL,
     TILE_TYPE_WATER,
-}
-
-[StructLayout(LayoutKind.Explicit)]
-public struct Coordinate
-{
-    [FieldOffset(0)]
-    public byte y;
-
-    [FieldOffset(1)]
-    public byte x;
-
-    [FieldOffset(0)]
-    public ushort xy;
-
-    public Coordinate(ushort _xy)
-    {
-        x = 0;
-        y = 0;
-        this.xy = _xy;
-    }
-
-    public Coordinate(byte _x, byte _y)
-    {
-        this.xy = 0;
-        this.x = _x;
-        this.y = _y;
-    }
 }
 
 public class H5TileBase : H5ObjectBase
@@ -55,7 +27,7 @@ public class H5TileBase : H5ObjectBase
 
     public IMovable ObjectOnTile { get; private set; }
 
-    public Coordinate m_Coordinate { get; private set; }
+    public ACoordinate m_Coordinate { get; private set; }
 
     // 인자로 H5Character를 넣어서 해당 캐릭터가 이동할 수 있는지에 대한 판단을 하는건 어떨까
     // ex) 물 타일의 경우 비행 유닛은 이동 가능, 지상 타입은 이동 불가
@@ -104,7 +76,7 @@ public class H5TileBase : H5ObjectBase
         if (coord != InvalidCoordinate)
         {
             Coordinate = coord;
-            m_Coordinate = new Coordinate(Coordinate);
+            m_Coordinate = new ACoordinate(Coordinate);
         }
         
         //Material Side

@@ -25,7 +25,7 @@ public class SkillData
 
 public class SkillSystem : H5SystemBase
 {
-    public bool DoSkillActive(SkillData skillData, Coordinate targetPos)
+    public bool DoSkillActive(SkillData skillData, ACoordinate targetPos)
     {
         // 임시로 범위는 1로 가정
         // 1. targetPos 기준에서 스킬의 범위 안에 있는 모든 타일을 가져온다.

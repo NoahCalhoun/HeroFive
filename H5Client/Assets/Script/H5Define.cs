@@ -43,6 +43,11 @@ public struct ACoordinate
         return new ACoordinate(newX < byte.MinValue || newX > byte.MaxValue ? byte.MaxValue : (byte)newX
             , newY < byte.MinValue || newY > byte.MaxValue ? byte.MaxValue : (byte)newY);
     }
+
+    public static RCoordinate operator -(ACoordinate dest, ACoordinate start)
+    {
+        return new RCoordinate((short)(dest.x - start.x), (short)(dest.y - start.y));
+    }
 }
 
 [StructLayout(LayoutKind.Explicit)]

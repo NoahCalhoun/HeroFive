@@ -56,18 +56,18 @@ public class AttackBaseData
     public Boundary GetBoundary { get { return new Boundary() { RelativeBound = new HashSet<RCoordinate>(Attack.Keys) }; } }
 }
 
-public class SkillTool : MonoBehaviour
+public class SkillEditor : MonoBehaviour
 {
 
 }
 
-[CustomEditor(typeof(SkillTool))]
-public class SkillToolEditor : Editor
+[CustomEditor(typeof(SkillEditor))]
+public class SkillEditorObject : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        var editor = target as SkillTool;
+        var editor = target as SkillEditor;
     }
 }

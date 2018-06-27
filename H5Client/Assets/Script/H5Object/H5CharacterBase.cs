@@ -57,7 +57,7 @@ public class H5CharacterBase : H5ObjectBase, IMovable
         var renderer = GetComponentInChildren<MeshRenderer>();
         renderer.material = loadMaterial;
         renderer.gameObject.transform.localScale = new Vector3(4, 4, 1);
-        renderer.gameObject.transform.localRotation = WorldManager.Instance.CameraRoot.rotation;
+        renderer.gameObject.transform.localRotation = WorldManager.Instance != null ? WorldManager.Instance.CameraRoot.rotation : Camera.main.transform.rotation;
 
         StatSystem.HP = charData.HP;
         StatSystem.ATK = charData.ATK;

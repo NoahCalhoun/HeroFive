@@ -33,7 +33,7 @@ public class SkillBaseData
     public Boundary SkillBoundary;
 }
 
-public class AttackFlag
+public class HitBaseData
 {
     //only : 유일값
     //flag : 중복 가능 값
@@ -51,7 +51,7 @@ public class AttackFlag
 
 public class AttackBaseData
 {
-    public Dictionary<RCoordinate, AttackFlag> Attack;
+    public Dictionary<RCoordinate, HitBaseData> Attack;
 
     public Boundary GetBoundary { get { return new Boundary() { RelativeBound = new HashSet<RCoordinate>(Attack.Keys) }; } }
 }
@@ -59,6 +59,36 @@ public class AttackBaseData
 public class SkillEditor : MonoBehaviour
 {
 
+    public Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
+
+    void Start()
+    {
+        var tiles = GameObject.FindGameObjectWithTag("TileRoot").GetComponent<TileRootEditor>().GetComponentsInChildren<H5TileBase>();
+        for (int i = 0; i < tiles.Length; ++i)
+        {
+            var tile = tiles[i];
+            tile.Refresh();
+            TileDic.Add(LogicHelper.GetCoordinateFromXY(tile.m_Coordinate.x, tile.m_Coordinate.y), tile);
+        }
+
+        WorldManager.SetTilesNeighbor(TileDic);
+
+        var centerTile = TileDic[new ACoordinate(5, 5).xy];
+        WorldManager.FocusCameraOnTile(centerTile, true);
+
+        WorldManager.SpawnCharacter(transform, centerTile, 1).Direction = H5Direction.Up;
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+            OnMousePicking();
+    }
+
+    void OnMousePicking()
+    {
+
+    }
 }
 
 [CustomEditor(typeof(SkillEditor))]

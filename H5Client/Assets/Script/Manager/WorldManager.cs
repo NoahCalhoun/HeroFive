@@ -31,8 +31,8 @@ public class WorldManager : MonoBehaviour
 
     private Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
 
-    private float CameraFloorDist = 10f;
-    private float CameraSkyDist = 8f;
+    private static float CameraFloorDist = 10f;
+    private static float CameraSkyDist = 8f;
 
     private List<H5TileBase> Path;
 
@@ -91,66 +91,37 @@ public class WorldManager : MonoBehaviour
         return h5Tile;
     }
 
-    public H5CharacterBase SpawnCharacter(byte x, byte y, int tableId)
+    H5CharacterBase SpawnCharacter(byte x, byte y, int tableId)
+    {
+        var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
+        if (spawnTile == null || spawnTile.IsEmpty == false)
+            return null;
+
+        return SpawnCharacter(CharacterRoot, spawnTile, tableId);
+    }
+
+    public static H5CharacterBase SpawnCharacter(Transform root, H5TileBase tile, int tableId)
     {
         var characterObjPrefab = Resources.Load("Prefab/Character") as GameObject;
         var characterObj = GameObject.Instantiate(characterObjPrefab);
 
         if (characterObj == null)
             return null;
-
-        var coord = LogicHelper.GetCoordinateFromXY(x, y);
+        
         var h5Character = characterObj.AddComponent<H5CharacterBase>();
-        h5Character.TM.SetParent(CharacterRoot);
+        h5Character.TM.SetParent(root);
         h5Character.InitCharacter(tableId);
 
-        var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
-        if (spawnTile == null || !spawnTile.OnTile(h5Character)) return null;
-
-        h5Character.TM.position = spawnTile.TM.position;
-        h5Character.OwnTile = spawnTile;
+        tile.OnTile(h5Character);
+        h5Character.OwnTile = tile;
+        h5Character.TM.position = tile.TM.position;
 
         return h5Character;
     }
 
-    public H5CharacterBase SpawnCharacter(byte x, byte y, CharacterType type)
+    public static void FocusCameraOnTile(H5TileBase tile, bool setAngle = false)
     {
-        var characterObjPrefab = Resources.Load("Prefab/Character") as GameObject;
-        var characterObj = GameObject.Instantiate(characterObjPrefab);
-
-        if (characterObj == null)
-            return null;
-
-        var coord = LogicHelper.GetCoordinateFromXY(x, y);
-        var h5Character = characterObj.AddComponent<H5CharacterBase>();
-        h5Character.TM.SetParent(CharacterRoot);
-        h5Character.InitCharacter(type);
-
-        var spawnTile = TileDic[LogicHelper.GetCoordinateFromXY(x, y)];
-        if (spawnTile != null)
-        {
-            h5Character.TM.position = spawnTile.TM.position;
-        }
-        else
-        {
-            h5Character.TM.position = new Vector3(0, 0, 0);
-        }
-
-        return h5Character;
-    }
-
-    public void FocusCameraOnTile(byte x, byte y, bool setAngle = false)
-    {
-        var coordinate = LogicHelper.GetCoordinateFromXY(x, y);
-        Vector3 lookAt;
-        if (TileDic.ContainsKey(coordinate))
-        {
-            lookAt = TileDic[coordinate].TM.position;
-        }
-        else
-        {
-            lookAt = new Vector3(H5TileBase.TileSize * x, 0, H5TileBase.TileSize * y);
-        }
+        Vector3 lookAt = tile.TM.position;
 
         var lookVec = new Vector3(CameraFloorDist * 0.7072f, CameraSkyDist, CameraFloorDist * 0.7072f) * -1f;
         var camPos = lookAt - lookVec;
@@ -170,6 +141,15 @@ public class WorldManager : MonoBehaviour
 
             Camera.main.transform.localRotation = camWorld.rotation;
         }
+    }
+
+    void FocusCameraOnTile(byte x, byte y, bool setAngle = false)
+    {
+        var coordinate = LogicHelper.GetCoordinateFromXY(x, y);
+        if (TileDic.ContainsKey(coordinate) == false)
+            return;
+
+        FocusCameraOnTile(TileDic[coordinate], setAngle);
     }
 
     void OnMouseClickEvent()
@@ -276,9 +256,9 @@ public class WorldManager : MonoBehaviour
         }
     }
 
-    void SetTilesNeighbor()
+    public static void SetTilesNeighbor(Dictionary<ushort, H5TileBase> tileDic)
     {
-        var e = TileDic.GetEnumerator();
+        var e = tileDic.GetEnumerator();
         while (e.MoveNext())
         {
             var tile = e.Current.Value;
@@ -310,9 +290,14 @@ public class WorldManager : MonoBehaviour
                 }
 
                 var neighborkey = LogicHelper.GetCoordinateFromXY(neighborx, neighbory);
-                tile.SetNeighbor(i, TileDic.ContainsKey(neighborkey) ? TileDic[neighborkey] : null);
+                tile.SetNeighbor(i, tileDic.ContainsKey(neighborkey) ? tileDic[neighborkey] : null);
             }
         }
+    }
+
+    void SetTilesNeighbor()
+    {
+        SetTilesNeighbor(TileDic);
     }
 
     void SetBoundEdge(HashSet<ushort> bound)

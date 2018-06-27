@@ -26,6 +26,7 @@ public class H5TileBase : H5ObjectBase
     private int SettingFlag;
 
     public IMovable ObjectOnTile { get; private set; }
+    public bool IsEmpty { get { return ObjectOnTile == null; } }
 
     public ACoordinate m_Coordinate { get; private set; }
 

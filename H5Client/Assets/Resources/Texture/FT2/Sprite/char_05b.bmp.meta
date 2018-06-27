@@ -1,12 +1,20 @@
 fileFormatVersion: 2
 guid: a7959ca51fc2a48408819625197e12df
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: Move00
+    21300002: Move01
+    21300004: Move02
+    21300006: Move03
+    21300008: Move04
+    21300010: Move05
+    21300012: Move06
+    21300014: Move07
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -29,27 +37,27 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 0
     aniso: -1
     mipBias: -1
-    wrapU: -1
-    wrapV: -1
+    wrapU: 1
+    wrapV: 1
     wrapW: -1
-  nPOTScale: 1
+  nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
-  textureType: 0
+  textureType: 8
   textureShape: 1
   singleChannelComponent: 0
   maxTextureSizeSet: 0
@@ -59,9 +67,20 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 1
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -69,11 +88,171 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Move00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 415
+        width: 61
+        height: 65
+      alignment: 9
+      pivot: {x: 0.5105595, y: 0.16307467}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5223eebc5db81a640a9f749aa669fba2
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move01
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 416
+        width: 56
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5000001, y: 0.12761688}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0071e95a4f3ce4a498bd3b3de43e3220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move02
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 417
+        width: 56
+        height: 63
+      alignment: 9
+      pivot: {x: 0.4424891, y: 0.22394767}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57670d1b0681b94438bf500d6c678e1f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move03
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 415
+        width: 57
+        height: 62
+      alignment: 9
+      pivot: {x: 0.4886994, y: 0.13638256}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 923f4597af4dc174b81893f1178663b1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move04
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 416
+        width: 51
+        height: 64
+      alignment: 9
+      pivot: {x: 0.47473982, y: 0.15781021}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37ca4a6e08ca36e47b28b1ee6eb1818d
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move05
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 418
+        width: 54
+        height: 62
+      alignment: 9
+      pivot: {x: 0.45399147, y: 0.1259933}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8dbabfc3bab1a3449ab62f5494310e7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move06
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 416
+        width: 61
+        height: 64
+      alignment: 9
+      pivot: {x: 0.45776218, y: 0.09742355}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a5dda818e2be574490ca41431c37f8a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Move07
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 418
+        width: 56
+        height: 62
+      alignment: 9
+      pivot: {x: 0.4769952, y: 0.14677183}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0427c560ac058648bfdda28c0cf62c4
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1c3921682b7dd70448d82db9aadf9be7
     vertices: []
     indices: 
     edges: []

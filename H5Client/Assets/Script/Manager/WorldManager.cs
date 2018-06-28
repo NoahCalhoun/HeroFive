@@ -300,7 +300,7 @@ public class WorldManager : MonoBehaviour
         SetTilesNeighbor(TileDic);
     }
 
-    void SetBoundEdge(HashSet<ushort> bound)
+    public static void SetBoundEdge(Dictionary<ushort, H5TileBase> tileDic, HashSet<ushort> bound)
     {
         if (bound == null || bound.Count <= 0)
             return;
@@ -313,9 +313,14 @@ public class WorldManager : MonoBehaviour
             {
                 var checkCoord = e.Current.GetNeighborCoordinate(i);
                 if (bound.Contains(checkCoord) == false)
-                    TileDic[e.Current].SetFlag(i);
+                    tileDic[e.Current].SetFlag(i);
             }
         }
+    }
+
+    void SetBoundEdge(HashSet<ushort> bound)
+    {
+        SetBoundEdge(TileDic, bound);
     }
 
     IEnumerator LoadMapScene(string name)

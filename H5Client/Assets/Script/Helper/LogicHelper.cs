@@ -92,16 +92,20 @@ public static class LogicHelper
         return GetCoordinateFromXY(hostX, hostY);
     }
 
-    public static bool MousePickingOnWorld(out RaycastHit hit, int layerMask)
+    public static bool MousePickingOnWorld(out RaycastHit hit, int layerMask, bool ckeckUI = true)
     {
-        var uiCamera = UIManager.Instance.UICameraRoot.gameObject.GetComponent<Camera>();
-        var ray = uiCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit uiHit;
-        Physics.Raycast(ray, out uiHit, float.PositiveInfinity, -1);
-        if (uiHit.collider != null)
+        Ray ray;
+        if (ckeckUI)
         {
-            hit = new RaycastHit();
-            return false;
+            var uiCamera = UIManager.Instance.UICameraRoot.gameObject.GetComponent<Camera>();
+            ray = uiCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit uiHit;
+            Physics.Raycast(ray, out uiHit, float.PositiveInfinity, -1);
+            if (uiHit.collider != null)
+            {
+                hit = new RaycastHit();
+                return false;
+            }
         }
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);

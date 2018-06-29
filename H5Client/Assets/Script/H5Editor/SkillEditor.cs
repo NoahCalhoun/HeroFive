@@ -6,9 +6,10 @@ using UnityEditor;
 
 public class Boundary
 {
+    public H5Direction Direction = H5Direction.Up;
     public HashSet<RCoordinate> RelativeBound;
 
-    public HashSet<ACoordinate> GetAbsoluteBound(ACoordinate pos)
+    public HashSet<ACoordinate> GetAbsoluteBound(ACoordinate pos, H5Direction dir, bool validCheck = true)
     {
         if (RelativeBound == null || RelativeBound.Count <= 0)
             return null;
@@ -17,8 +18,8 @@ public class Boundary
         var e = RelativeBound.GetEnumerator();
         while (e.MoveNext())
         {
-            var aPos = pos + e.Current;
-            if (aPos.IsValid)
+            var aPos = pos + e.Current.Rotate(Direction.Relation(dir));
+            if (validCheck == false || aPos.IsValid)
                 returnSet.Add(aPos);
         }
 
@@ -213,8 +214,41 @@ public class SkillEditorObject : Editor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
-
         var editor = target as SkillEditor;
+
+        editor.EditType = (SkillEditType)EditorGUILayout.EnumPopup("EditType", editor.EditType);
+
+        switch (editor.EditType)
+        {
+            case SkillEditType.Attack:
+                {
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Save Attack"))
+                    {
+
+                    }
+                    if (GUILayout.Button("Load Attack"))
+                    {
+
+                    }
+                    GUILayout.EndHorizontal();
+
+                    editor.HitData.HitType = (HitType_Tool)EditorGUILayout.EnumPopup("Hit Type", editor.HitData.HitType);
+                    editor.HitData.HitDirection = (HitDirection_Tool)EditorGUILayout.EnumPopup("Hit Direction", editor.HitData.HitDirection);
+                    int value = EditorGUILayout.IntField("Hit Value", editor.HitData.HitValue);
+                    editor.HitData.HitValue = (byte)Mathf.Clamp(value, byte.MinValue, byte.MaxValue);
+                    break;
+                }
+
+            case SkillEditType.Skill:
+                {
+                    break;
+                }
+
+            case SkillEditType.Demo:
+                {
+                    break;
+                }
+        }
     }
 }

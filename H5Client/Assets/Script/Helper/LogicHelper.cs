@@ -169,4 +169,120 @@ public static class LogicHelper
 
         return H5Direction.Max;
     }
+
+    public static H5Direction Relation(this H5Direction dir, H5Direction test)
+    {
+        switch (dir)
+        {
+            case H5Direction.Up:
+                {
+                    switch (test)
+                    {
+                        case H5Direction.Up:
+                            return H5Direction.Up;
+                        case H5Direction.Down:
+                            return H5Direction.Down;
+                        case H5Direction.Left:
+                            return H5Direction.Left;
+                        case H5Direction.Right:
+                            return H5Direction.Right;
+                    }
+                    break;
+                }
+
+            case H5Direction.Down:
+                {
+                    switch (test)
+                    {
+                        case H5Direction.Up:
+                            return H5Direction.Down;
+                        case H5Direction.Down:
+                            return H5Direction.Up;
+                        case H5Direction.Left:
+                            return H5Direction.Right;
+                        case H5Direction.Right:
+                            return H5Direction.Left;
+                    }
+                    break;
+                }
+
+            case H5Direction.Left:
+                {
+                    switch (test)
+                    {
+                        case H5Direction.Up:
+                            return H5Direction.Right;
+                        case H5Direction.Down:
+                            return H5Direction.Left;
+                        case H5Direction.Left:
+                            return H5Direction.Up;
+                        case H5Direction.Right:
+                            return H5Direction.Down;
+                    }
+                    break;
+                }
+
+            case H5Direction.Right:
+                {
+                    switch (test)
+                    {
+                        case H5Direction.Up:
+                            return H5Direction.Left;
+                        case H5Direction.Down:
+                            return H5Direction.Right;
+                        case H5Direction.Left:
+                            return H5Direction.Down;
+                        case H5Direction.Right:
+                            return H5Direction.Up;
+                    }
+                    break;
+                }
+        }
+
+        return H5Direction.Max;
+    }
+
+    public static RCoordinate Rotate(this RCoordinate rCoord, H5Direction rot)
+    {
+        short newX = 0, newY = 0;
+        switch (rot)
+        {
+            case H5Direction.Up:
+                {
+                    newX = rCoord.x;
+                    newY = rCoord.y;
+                    break;
+                }
+
+            case H5Direction.Down:
+                {
+                    newX = (short)(-rCoord.x);
+                    newY = (short)(-rCoord.y);
+                    break;
+                }
+
+            case H5Direction.Left:
+                {
+                    newX = (short)(-rCoord.y);
+                    newY = rCoord.x;
+                    break;
+                }
+
+            case H5Direction.Right:
+                {
+                    newX = rCoord.y;
+                    newY = (short)(-rCoord.x);
+                    break;
+                }
+
+            case H5Direction.Max:
+                {
+                    newX = short.MaxValue;
+                    newY = short.MaxValue;
+                    break;
+                }
+        }
+
+        return new RCoordinate(newX, newY);
+    }
 }

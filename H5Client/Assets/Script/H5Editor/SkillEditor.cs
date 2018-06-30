@@ -90,6 +90,7 @@ public class SkillEditor : MonoBehaviour
     //public
     public SkillEditType EditType;
     public Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
+    public Dictionary<ushort, ToolAttackTag> TagDic = new Dictionary<ushort, ToolAttackTag>();
 
     //Hit
     public class HitData_Tool
@@ -114,11 +115,18 @@ public class SkillEditor : MonoBehaviour
     void Start()
     {
         var tiles = GameObject.FindGameObjectWithTag("TileRoot").GetComponent<TileRootEditor>().GetComponentsInChildren<H5TileBase>();
+        var attackTagPrefab = Resources.Load("Prefab/Widget/AttackTag") as GameObject;
         for (int i = 0; i < tiles.Length; ++i)
         {
             var tile = tiles[i];
             tile.Refresh();
+
+            var attackTagObj = GameObject.Instantiate(attackTagPrefab);
+            var attackTag = attackTagObj.GetComponent<ToolAttackTag>();
+            attackTag.InitTag(tile);
+
             TileDic.Add(LogicHelper.GetCoordinateFromXY(tile.m_Coordinate.x, tile.m_Coordinate.y), tile);
+            TagDic.Add(LogicHelper.GetCoordinateFromXY(tile.m_Coordinate.x, tile.m_Coordinate.y), attackTag);
         }
 
         WorldManager.SetTilesNeighbor(TileDic);
@@ -164,6 +172,7 @@ public class SkillEditor : MonoBehaviour
                         else if (right && AttackData.Attack.ContainsKey(tile.m_Coordinate.xy) == true)
                         {
                             AttackData.Attack.Remove(tile.m_Coordinate.xy);
+                            TagDic[tile.m_Coordinate.xy].ClearTag();
                             controlled = true;
                         }
 
@@ -179,6 +188,7 @@ public class SkillEditor : MonoBehaviour
                             while (e.MoveNext())
                             {
                                 TileDic[e.Current.Key].SetPicked(true);
+                                TagDic[e.Current.Key].RefreshTag(AttackData.Attack[e.Current.Key]);
                             }
                             WorldManager.SetBoundEdge(TileDic, new HashSet<ushort>(AttackData.Attack.Keys));
                         }

@@ -26,6 +26,8 @@ public class ToolAttackTag : H5ObjectBase
     {
         sb.Clear();
 
+        sb.Append("[b]");
+
         switch (data.HitDirection)
         {
             case HitDirection_Tool.None: sb.Append('⊙'); break;
@@ -41,6 +43,8 @@ public class ToolAttackTag : H5ObjectBase
         }
 
         sb.Append(data.HitValue);
+
+        sb.Append("[/b]");
 
         Tag.text = sb.ToString();
     }

@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using System.IO;
 
 using UnityEngine;
 using UnityEditor;
+using System;
 
 public class Boundary
 {
@@ -87,6 +90,8 @@ public enum HitDirection_Tool
 
 public class SkillEditor : MonoBehaviour
 {
+    public static readonly string NoNameStr = "NoName";
+
     //public
     public SkillEditType EditType;
     public Dictionary<ushort, H5TileBase> TileDic = new Dictionary<ushort, H5TileBase>();
@@ -106,9 +111,10 @@ public class SkillEditor : MonoBehaviour
     //Attack
     public class AttackData_Tool
     {
+        public string Name = NoNameStr;
         public Dictionary<ushort, HitData_Tool> Attack = new Dictionary<ushort, HitData_Tool>(); //Key : ACoord
     }
-    public AttackData_Tool AttackData;
+    public AttackData_Tool AttackData = new AttackData_Tool();
 
     //Skill
 
@@ -121,7 +127,7 @@ public class SkillEditor : MonoBehaviour
             var tile = tiles[i];
             tile.Refresh();
 
-            var attackTagObj = GameObject.Instantiate(attackTagPrefab);
+            var attackTagObj = Instantiate(attackTagPrefab);
             var attackTag = attackTagObj.GetComponent<ToolAttackTag>();
             attackTag.InitTag(tile);
 
@@ -172,25 +178,12 @@ public class SkillEditor : MonoBehaviour
                         else if (right && AttackData.Attack.ContainsKey(tile.m_Coordinate.xy) == true)
                         {
                             AttackData.Attack.Remove(tile.m_Coordinate.xy);
-                            TagDic[tile.m_Coordinate.xy].ClearTag();
                             controlled = true;
                         }
 
                         if (controlled)
                         {
-                            var et = TileDic.GetEnumerator();
-                            while (et.MoveNext())
-                            {
-                                et.Current.Value.ClearFlag();
-                            }
-
-                            var e = AttackData.Attack.GetEnumerator();
-                            while (e.MoveNext())
-                            {
-                                TileDic[e.Current.Key].SetPicked(true);
-                                TagDic[e.Current.Key].RefreshTag(AttackData.Attack[e.Current.Key]);
-                            }
-                            WorldManager.SetBoundEdge(TileDic, new HashSet<ushort>(AttackData.Attack.Keys));
+                            RefreshTile();
                         }
                         break;
                     }
@@ -217,11 +210,37 @@ public class SkillEditor : MonoBehaviour
             //}
         }
     }
+
+    public void RefreshTile()
+    {
+        var etile = TileDic.GetEnumerator();
+        while (etile.MoveNext())
+        {
+            etile.Current.Value.ClearFlag();
+        }
+
+        var etag = TagDic.GetEnumerator();
+        while (etag.MoveNext())
+        {
+            etag.Current.Value.ClearTag();
+        }
+
+        var e = AttackData.Attack.GetEnumerator();
+        while (e.MoveNext())
+        {
+            TileDic[e.Current.Key].SetPicked(true);
+            TagDic[e.Current.Key].RefreshTag(AttackData.Attack[e.Current.Key]);
+        }
+        WorldManager.SetBoundEdge(TileDic, new HashSet<ushort>(AttackData.Attack.Keys));
+    }
 }
 
 [CustomEditor(typeof(SkillEditor))]
 public class SkillEditorObject : Editor
 {
+    static readonly string AttackDataPath = "Assets/Resources/SkillToolData/AttackData";
+    static readonly string SkillDataPath = "Assets/Resources/SkillToolData/SkillData";
+
     public override void OnInspectorGUI()
     {
         var editor = target as SkillEditor;
@@ -233,16 +252,31 @@ public class SkillEditorObject : Editor
             case SkillEditType.Attack:
                 {
                     GUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Save Attack"))
+                    EditorGUILayout.LabelField("Save Attack", GUILayout.Width(100));
+                    editor.AttackData.Name = EditorGUILayout.TextField(editor.AttackData.Name, GUILayout.Width(150));
+                    if (GUILayout.Button("Save"))
                     {
-
-                    }
-                    if (GUILayout.Button("Load Attack"))
-                    {
-
+                        SaveAttack(editor);
                     }
                     GUILayout.EndHorizontal();
 
+                    GUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("Load Attack", GUILayout.Width(100));
+                    var atkFiles = Directory.GetFiles(AttackDataPath, "*.csv");
+                    var dropDown = new string[atkFiles.Length + 1];
+                    for (int i = 0; i < dropDown.Length; ++i)
+                    {
+                        dropDown[i] = i == 0 ? SkillEditor.NoNameStr : atkFiles[i - 1].Substring(AttackDataPath.Length + 1).Replace(".csv", "");
+                    }
+                    var idx = EditorGUILayout.Popup(0, dropDown);
+                    if (idx > 0)
+                        LoadAttack(editor, dropDown[idx]);
+                    //if (GUILayout.Button("Load Attack"))
+                    //{
+                    //    LoadAttack(editor);
+                    //}
+                    GUILayout.EndHorizontal();
+                    
                     editor.HitData.HitType = (HitType_Tool)EditorGUILayout.EnumPopup("Hit Type", editor.HitData.HitType);
                     editor.HitData.HitDirection = (HitDirection_Tool)EditorGUILayout.EnumPopup("Hit Direction", editor.HitData.HitDirection);
                     int value = EditorGUILayout.IntField("Hit Value", editor.HitData.HitValue);
@@ -260,5 +294,90 @@ public class SkillEditorObject : Editor
                     break;
                 }
         }
+    }
+
+    public void SaveAttack(SkillEditor editor)
+    {
+        if (editor.AttackData.Name == SkillEditor.NoNameStr || editor.AttackData.Name == "")
+        {
+            EditorUtility.DisplayDialog("NoName!", "NoName Cannot be a name of Attack.", "OK");
+            return;
+        }
+
+        var dest = Directory.GetFiles(AttackDataPath, string.Format("{0}.csv", editor.AttackData.Name));
+        if (dest.Length > 0)
+        {
+            if (EditorUtility.DisplayDialog("Warning!", string.Format("{0} is already exist. Do you want to Override?", editor.AttackData.Name), "OK", "Cancel"))
+            {
+                File.Delete(dest[0]);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        using (StreamWriter sw = new StreamWriter(string.Format("{0}/{1}.csv", AttackDataPath, editor.AttackData.Name), false))
+        {
+            // 상대좌표, HitType, HitDirection, HitValue
+            var e = editor.AttackData.Attack.GetEnumerator();
+            while (e.MoveNext())
+            {
+                //상대좌표
+                var acoord = new ACoordinate(e.Current.Key);
+                var rcoord = acoord - new ACoordinate(5, 5);
+                sw.Write(string.Format("{0:X}", rcoord.xy));
+                sw.Write(',');
+
+                //Hit Data
+                sw.Write(string.Format("{0:X}", e.Current.Value.HitType));
+                sw.Write(',');
+                sw.Write(string.Format("{0:X}", e.Current.Value.HitDirection));
+                sw.Write(',');
+                sw.Write(string.Format("{0:X}", e.Current.Value.HitValue));
+                sw.Write('\n');
+            }
+        }
+    }
+
+    public void LoadAttack(SkillEditor editor, string atkStr)
+    {
+        if (atkStr == SkillEditor.NoNameStr)
+            return;
+
+        var dest = Directory.GetFiles(AttackDataPath, string.Format("{0}.csv", atkStr));
+        if (dest.Length <= 0)
+        {
+            EditorUtility.DisplayDialog("No Data!", string.Format("There is no Attack Data named {0}.", atkStr), "OK");
+            return;
+        }
+
+        editor.AttackData = new SkillEditor.AttackData_Tool();
+        editor.AttackData.Name = atkStr;
+
+        using (FileStream fs = new FileStream(dest[0], FileMode.Open))
+        {
+            using (StreamReader sr = new StreamReader(fs, Encoding.UTF8, false))
+            {
+                string strLineValue = null;
+
+                while ((strLineValue = sr.ReadLine()) != null)
+                {
+                    // 상대좌표, HitType, HitDirection, HitValue
+                    var line = strLineValue.Split(',');
+
+                    var rcoord = new RCoordinate(Convert.ToInt32(line[0], 16));
+                    var acoord = new ACoordinate(5, 5) + rcoord;
+
+                    var hitType = (HitType_Tool)(Convert.ToInt32(line[1], 16));
+                    var hitDirection = (HitDirection_Tool)(Convert.ToInt32(line[2], 16));
+                    var hitValue = Convert.ToByte(line[3], 16);
+
+                    editor.AttackData.Attack.Add(acoord.xy, new SkillEditor.HitData_Tool() { HitType = hitType, HitDirection = hitDirection, HitValue = hitValue });
+                }
+            }
+        }
+
+        editor.RefreshTile();
     }
 }

@@ -56,13 +56,13 @@ public struct RCoordinate
     [FieldOffset(0)]
     public short y;
 
-    [FieldOffset(1)]
+    [FieldOffset(2)]
     public short x;
 
     [FieldOffset(0)]
-    public uint xy;
+    public int xy;
 
-    public RCoordinate(uint _xy)
+    public RCoordinate(int _xy)
     {
         x = 0;
         y = 0;

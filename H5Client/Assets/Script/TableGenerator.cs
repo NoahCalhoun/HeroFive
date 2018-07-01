@@ -8,8 +8,6 @@ using UnityEditor;
 [CustomEditor(typeof(TableGenerator))]
 public class TableGeneratorEditor : Editor
 {
-    TILE_TYPE CurrentTileType = TILE_TYPE.TILE_TYPE_NONE;
-
     public override void OnInspectorGUI()
     {
         //DrawDefaultInspector();

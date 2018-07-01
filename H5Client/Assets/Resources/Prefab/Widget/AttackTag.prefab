@@ -111,11 +111,11 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: 233aa32cb190169479bd719bd3a070bd, type: 3}
   mFont: {fileID: 0}
-  mText: "\u21962"
+  mText: 
   mFontSize: 40
   mFontStyle: 0
   mAlignment: 0
-  mEncoding: 0
+  mEncoding: 1
   mMaxLineCount: 0
   mEffectStyle: 0
   mEffectColor: {r: 0, g: 0, b: 0, a: 1}
